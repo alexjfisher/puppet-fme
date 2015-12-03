@@ -37,7 +37,7 @@ class {'fme::api_settings':
   password => 'password',
 }
 
-fme_user {'myuser'
+fme_user {'myuser':
   fullname  => 'My User',
   password  => 'topsecret',
 }
