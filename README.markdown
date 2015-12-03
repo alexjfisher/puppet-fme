@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/OrdnanceSurvey/puppet-fme.svg)](https://travis-ci.org/OrdnanceSurvey/puppet-fme)
+[![Build Status](https://img.shields.io/travis/OrdnanceSurvey/puppet-fme.svg)](https://travis-ci.org/OrdnanceSurvey/puppet-fme)
+[![Coverage Status](https://img.shields.io/coveralls/OrdnanceSurvey/puppet-fme.svg)](https://coveralls.io/github/OrdnanceSurvey/puppet-fme)
 
 #### Table of Contents
 
