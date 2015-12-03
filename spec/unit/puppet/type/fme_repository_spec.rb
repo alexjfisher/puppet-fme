@@ -1,6 +1,9 @@
 require 'spec_helper'
 
 describe Puppet::Type.type(:fme_repository) do
+  before :each do
+    Fme::Helper.expects(:get_url).returns('www.example.com').at_most(99)
+  end
   describe 'when validating attributes' do
     [ :name, :provider ].each do |param|
       it "should have a #{param} parameter" do
