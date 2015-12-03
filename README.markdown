@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/OrdnanceSurvey/puppet-fme.svg)](https://travis-ci.org/OrdnanceSurvey/puppet-fme)
+
 #### Table of Contents
 
 1. [Overview](#overview)
