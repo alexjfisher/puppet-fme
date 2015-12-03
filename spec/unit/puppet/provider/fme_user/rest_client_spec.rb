@@ -2,6 +2,9 @@ require 'spec_helper'
 
 provider_class = Puppet::Type.type(:fme_user).provider(:rest_client)
 describe provider_class do
+  before :each do
+    Fme::Helper.stubs(:get_url).returns('www.example.com')
+  end
   let :resource do
     Puppet::Type.type(:fme_user).new(:name => "testuser", :provider => :rest_client)
   end
@@ -16,7 +19,6 @@ describe provider_class do
     end
     describe 'without users' do
       before :each do
-        Fme::Helper.expects(:get_url).returns('www.example.com')
         stub_request(:get, 'http://www.example.com/security/accounts?detail=high').
           to_return(:body => '[]')
       end
@@ -26,7 +28,6 @@ describe provider_class do
     end
     describe 'with 1 user' do
       before :each do
-        Fme::Helper.expects(:get_url).returns('www.example.com')
         stub_request(:get, 'http://www.example.com/security/accounts?detail=high').
           to_return(:body =>
                     '[{"fullName": "test user",
@@ -49,7 +50,6 @@ describe provider_class do
     end
     describe 'with 2 users' do
       before :each do
-        Fme::Helper.expects(:get_url).returns('www.example.com')
         stub_request(:get, 'http://www.example.com/security/accounts?detail=high').
           to_return(:body =>
                     '[{"fullName": "test user",
@@ -111,9 +111,6 @@ describe provider_class do
   end
 
   describe 'modify_user' do
-    before :each do
-      Fme::Helper.expects(:get_url).returns('www.example.com')
-    end
     context 'when API returns response code 200' do
       before :each do
         stub_request(:put, "http://www.example.com/security/accounts/testuser?detail=high&name=testuser").to_return(:status => 200, :body => '{"fullName": "test user","name": "testuser","roles": ["fmeuser"]}')
@@ -154,7 +151,6 @@ describe provider_class do
       end
       context 'when password is set' do
         before :each do
-          Fme::Helper.expects(:get_url).returns('www.example.com')
           stub_request(:post, "http://www.example.com/security/accounts?name=testuser")
         end
         it 'should create user' do
@@ -180,7 +176,6 @@ describe provider_class do
     describe 'is being flushed' do
       context 'when being deleted' do
         before :each do
-          Fme::Helper.expects(:get_url).returns('www.example.com')
           stub_request(:delete, "http://www.example.com/security/accounts/testuser")
           provider.instance_variable_set(:@property_flush, { :ensure => :absent } )
         end
