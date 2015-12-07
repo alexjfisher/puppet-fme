@@ -41,9 +41,19 @@ class {'fme::api_settings':
 }
 
 fme_user {'myuser':
-  fullname  => 'My User',
-  password  => 'topsecret',
+  fullname => 'My User',
+  password => 'topsecret',
 }
+
+fme_repository {'my_repo':
+  ensure => present,
+}
+
+fme_repository_item {'my_repo/item.fmw':
+  ensure => present,
+  source => '/path/to/item.fmw',
+}
+
 ```
 
 ## Usage

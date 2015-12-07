@@ -4,7 +4,7 @@ provider_class = Puppet::Type.type(:fme_repository).provider(:rest_client)
 
 describe provider_class do
   before :each do
-    Fme::Helper.expects(:get_url).returns('www.example.com').at_most(99)
+    Fme::Helper.stubs(:get_url).returns('www.example.com')
   end
   describe 'instances' do
     it 'should have an instances method' do
