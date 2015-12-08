@@ -49,8 +49,9 @@ describe Puppet::Type.type(:fme_repository_item) do
       end
       context "when set" do
         context "to match <repository>/<item>" do
-          it 'should raise error' do
+          it 'should be unaffected by munge' do
             expect { @item = described_class.new( {:title => 'resourcetitle', :name => 'repo/item.fmw', :repository => 'repo', :item => 'item.fmw', :source => '/path/to/item.fmw', :ensure => :present})}.to_not raise_error
+            expect(@item[:name]).to eq('repo/item.fmw')
           end
         end
         context "with mismatched repository or item" do
