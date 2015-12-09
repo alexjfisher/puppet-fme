@@ -65,14 +65,23 @@ Puppet::Type.type(:fme_repository_item).provide(:rest_client) do
   end
 
   def create
-    url = "#{@baseurl}/repositories/#{resource[:repository]}/items"
-    RestClient.post(url, read_item_from_file, get_post_params) do |response, request, result, &block|
-      case response.code
-      when 201
-        set_property_hash_from_create_response response
-      else
-        raise Puppet::Error, "FME Rest API returned #{response.code} when creating #{resource[:name]}. #{JSON.parse(response)}"
-      end
+    fail "source is required when creating new repository item" if resource[:source].nil?
+    RestClient.post(create_url, read_item_from_file, get_post_params) do |response, request, result, &block|
+      process_create_response(response)
+    end
+  end
+
+  def create_url
+    "#{@baseurl}/repositories/#{resource[:repository]}/items"
+  end
+
+  def process_create_response(response)
+    case response.code
+    when 201
+      set_property_hash_from_create_response response
+      self.services = resource[:services] unless resource[:services].nil?
+    else
+      raise Puppet::Error, "FME Rest API returned #{response.code} when creating #{resource[:name]}. #{JSON.parse(response)}"
     end
   end
 
@@ -106,6 +115,47 @@ Puppet::Type.type(:fme_repository_item).provide(:rest_client) do
 
   def destroy
     RestClient.delete("#{@baseurl}/repositories/#{resource[:repository]}/items/#{resource[:item]}", :accept => :json)
-    @property_hash[:ensure] = :absent
+    @property_hash.clear
+  end
+
+  def services
+    response = RestClient.get(item_services_url, :accept => :json)
+    services = JSON.parse(response)
+    services.map{|x| x['name']}
+  end
+
+  def services=(services)
+    RestClient.put(item_services_url, services_body(services), :accept => :json, :content_type => 'application/x-www-form-urlencoded') do |response, request, result, &block|
+      process_put_services_response(services,response)
+    end
+  end
+
+  def item_services_url
+    "#{Fme::Helper.get_url}/repositories/#{resource[:repository]}/items/#{resource[:item]}/services"
+  end
+
+  def services_body(services)
+    URI.encode_www_form( :services => services )
+  end
+
+  def process_put_services_response(services,response)
+    case response.code
+    when 200
+      process_put_services_response_code_200(services)
+    when 207
+      process_put_services_response_code_207(services,response)
+    else
+      raise Puppet::Error, "FME Rest API returned #{response.code} when adding services to #{resource[:name]}. #{JSON.parse(response)}"
+    end
+  end
+
+  def process_put_services_response_code_200(services)
+    @property_hash[:services] = services
+  end
+
+  def process_put_services_response_code_207(services,response)
+    #"The response body contains information about the result of the registration operation, indicating success or error status for each service"
+    @property_hash[:services] = JSON.parse(response).map { |service| service['name'] if service['status'] == 200}.compact
+    raise Puppet::Error, "The following services couldn't be added to #{resource[:name]}: #{services-@property_hash[:services]}"
   end
 end

@@ -196,9 +196,9 @@ describe provider_class do
         stub_request(:delete, "http://www.example.com/repositories/repo/items/item.fmw").
           to_return(:status => 200)
       end
-      it 'should have @property_hash :ensure set to :absent' do
+      it 'should have @property_hash cleared' do
         provider.destroy
-        expect(provider.instance_variable_get("@property_hash")).to eq( { :ensure => :absent } )
+        expect(provider.instance_variable_get("@property_hash")).to be_empty
       end
     end
     describe 'read_item_from_file' do
@@ -207,6 +207,123 @@ describe provider_class do
       end
       it 'should return data from a file' do
         expect(provider.read_item_from_file).to eq('DATA')
+      end
+    end
+    describe 'is managing services' do
+      describe '.services' do
+        context 'when item has no services' do
+          before :each do
+            stub_request(:get, "http://www.example.com/repositories/repo/items/item.fmw/services").
+              with(:headers => { 'Accept'=>'application/json' } ).
+              to_return(:status => 200, :body => [].to_json)
+          end
+          it 'should return names of the services' do
+            expect(provider.services).to eq([])
+          end
+        end
+
+        context 'when item has 2 services' do
+          before :each do
+            stub_request(:get, "http://www.example.com/repositories/repo/items/item.fmw/services").
+              with(:headers => { 'Accept'=>'application/json' } ).
+              to_return(:status => 200,
+                        :body   => [
+                          {'displayName' => 'service name 1', 'name' => 'service1' },
+                          {'displayName' => 'service name 2', 'name' => 'service2' }].to_json)
+          end
+          it 'should return 2 services' do
+            expect(provider.services.size).to eq(2)
+            expect(provider.services[0]).to eq('service1')
+            expect(provider.services[1]).to eq('service2')
+            expect(provider.services).to eq(['service1','service2'])
+          end
+        end
+      end
+
+      describe '.services=' do
+        it 'should process PUT responses with process_put_services_response' do
+          stub_request(:put, "http://www.example.com/repositories/repo/items/item.fmw/services").
+            with(:body => {"services"=>"service2"}).
+            to_return(:status => 200,
+                      :body => 'dummy_response')
+            provider.expects(:process_put_services_response).with(['service1','service2'],'dummy_response')
+            provider.services = ['service1','service2']
+        end
+      end
+
+      describe '.item_services_url' do
+        it 'should return correct URL' do
+          expect(provider.item_services_url).to eq ('www.example.com/repositories/repo/items/item.fmw/services')
+        end
+      end
+
+      describe '.services_body' do
+        context 'when no services' do
+          it 'should return an empty string' do
+            expect(provider.services_body([])).to eq('')
+          end
+        end
+        context 'when 2 services' do
+          it 'should return URI encoded string' do
+            expect(provider.services_body(['service1','service2'])).to eq('services=service1&services=service2')
+          end
+        end
+      end
+
+      describe '.process_put_services_response' do
+        context 'when response = 200' do
+          it 'should call process_put_services_response_code_200' do
+            response = mock('response')
+            dummy_services = ['service1','service2']
+            response.stubs(:code).returns(200)
+            provider.expects(:process_put_services_response_code_200)
+            provider.process_put_services_response(dummy_services,response)
+          end
+        end
+        context 'when response = 207' do
+          it 'should call process_put_services_response_code_207' do
+            response = mock('response')
+            dummy_services = ['service1','service2']
+            response.stubs(:code).returns(207)
+            provider.expects(:process_put_services_response_code_207).with(dummy_services,response)
+            provider.process_put_services_response(dummy_services,response)
+          end
+        end
+        context 'when something else' do
+          it 'should raise exception' do
+            response = mock('response')
+            dummy_services = ['service1','service2']
+            response.stubs(:code).returns(404)
+            response.stubs(:to_str).returns('{"message":"dummy"}')
+            expect{ provider.process_put_services_response(dummy_services,response) }.
+              to raise_error(Puppet::Error,
+                             /FME Rest API returned 404 when adding services to repo\/item\.fmw\. {"message"=>"dummy"}/)
+          end
+        end
+      end
+
+      describe '.process_put_services_response_code_200' do
+        it 'should populate @property_hash' do
+          provider.process_put_services_response_code_200(['service1','service2'])
+          expect(provider.instance_variable_get("@property_hash")[:services]).to eq(['service1','service2'])
+        end
+      end
+
+      describe '.process_put_services_response_code_207' do
+        it 'should add sucessfully inserted services to @property_hash and raise error' do
+          services_being_inserted = ['foo','service2']
+          response = [
+            { 'reason' => 'missing', 'name' => 'foo', 'status' => 409},
+            { "entity" =>
+              { "displayName" => "Test Service 2", "name" => "service2" },
+              "name" => "service2",
+              "status" => 200
+            }].to_json
+          expect{ provider.process_put_services_response_code_207(services_being_inserted,response) }.
+            to raise_error(Puppet::Error,
+                           /The following services couldn't be added to repo\/item\.fmw: \["foo"\]/)
+          expect(provider.instance_variable_get("@property_hash")[:services]).to eq(['service2'])
+        end
       end
     end
   end
