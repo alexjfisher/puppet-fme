@@ -20,19 +20,30 @@ This module provides types and providers for FME resources.  The FME Server REST
 
 ## Module Description
 
-The providers provided by this module use the FME Server v2 REST API to configure various elements of the FME Server.
+The types provided by this module use the FME Server v2 REST API to configure various elements of the FME Server.
 
 ## Setup
 
 ### What fme affects
 
-* `/etc/fme_api_settings.yaml`
+* `/etc/fme_api_settings.yaml` or `C:\fme_api_settings.yaml`
 
 ### Setup Requirements
 
 Before using any of the types, the `/etc/fme_api_settings.yaml` file must first be created.  This can be done using the `fme::api_settings` class.
 
 ### Beginning with fme
+
+Declare the fme::api_settings class.  After that, you can use any of the types offered by the module.
+
+## Usage
+
+All the fme resource types use the API to query and update the server's configuration.
+Before using any of these types, declare the fme::api_settings class and this will generate the API settings file containing the API credentials to use.
+
+All the types autorequire the settings file.
+
+Here is a simple example that creates a user and uploads a workspace to a repository.
 
 ```
 class {'fme::api_settings':
@@ -56,14 +67,31 @@ fme_repository_item {'my_repo/item.fmw':
 
 ```
 
-## Usage
-
-TODO
-
 ## Reference
 
-TODO
+### Classes
 
+#### Public Classes
+*[`fme::api_settings`](#fmeapi_settings): Creates an fme_api_settings.yaml file
+
+### `fme::api_settings`
+
+#### Parameters
+
+##### `username`
+The API username. **mandatory**
+
+#### `password`
+The API password. **mandatory**
+
+#### `host`
+The FME Server to connect to. Default: 'localhost'.
+
+#### `port`
+TCP port of the FME Server API. Default: 80
+
+#### `protocol`
+Whether to use HTTP or HTTPs. Default: 'http'
 ## Limitations
 
-TODO
+This is an early release with only a few types implemented.
