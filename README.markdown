@@ -79,19 +79,19 @@ fme_repository_item {'my_repo/item.fmw':
 #### Parameters
 
 ##### `username`
-The API username. **mandatory**
+Sets the API username. **mandatory**
 
 #### `password`
-The API password. **mandatory**
+Sets the API password. **mandatory**
 
 #### `host`
-The FME Server to connect to. Default: 'localhost'.
+Sets the FME Server to connect to. Default: 'localhost'.
 
 #### `port`
-TCP port of the FME Server API. Default: 80
+Sets the TCP port of the FME Server API. Default: 80.
 
 #### `protocol`
-Whether to use HTTP or HTTPs. Default: 'http'
+Sets the protocol to use. Valid options: 'http' or 'https'. Default: 'http'.
 ## Limitations
 
 This is an early release with only a few types implemented.
