@@ -35,7 +35,6 @@ Puppet::Type.newtype(:fme_repository_item) do
       fail "'repository' parameter #{self[:repository]} must match resource title #{@title} or be omitted" unless match.captures[0] == self[:repository]
       fail "'item' parameter #{self[:item]} must match resource title #{@title} or be omitted" unless match.captures[1] == self[:item]
     end
-    fail "source is required when ensure is present" if self[:ensure] == :present and self[:source].nil?
   end
 
   newparam(:dummy) do
@@ -89,5 +88,17 @@ Puppet::Type.newtype(:fme_repository_item) do
   newproperty(:last_save_date) do
     desc "The item's lastSaveDate. Read-only"
     validate { |val| fail "last_save_date is read-only" }
+  end
+
+  newproperty(:services, :array_matching => :all) do
+    desc "The item's registered services"
+    def insync?(is)
+      is.sort == should.sort
+    end
+    validate do |value|
+      raise ArgumentError, "Services must be array of strings." unless value.is_a?(String)
+      raise ArgumentError, "Services cannot include ','." if value.include?(",")
+      raise ArgumentError, "Services cannot include ' '." if value.include?(" ")
+    end
   end
 end

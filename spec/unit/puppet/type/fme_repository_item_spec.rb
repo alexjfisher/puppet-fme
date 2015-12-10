@@ -10,7 +10,7 @@ describe Puppet::Type.type(:fme_repository_item) do
         expect(described_class.attrtype(param)).to eq(:param)
       end
     end
-    [ :ensure, :description, :item_title, :type, :last_save_date ].each do |prop|
+    [ :ensure, :description, :item_title, :type, :last_save_date, :services ].each do |prop|
       it "should have a #{prop} property" do
         expect(described_class.attrtype(prop)).to eq(:property)
       end
@@ -58,6 +58,33 @@ describe Puppet::Type.type(:fme_repository_item) do
           it 'should raise error' do
             expect { @item = described_class.new( {:title => 'resourcetitle', :name => 'repo2/item42.fmw', :repository => 'repo', :item => 'item.fmw', :source => '/path/to/item.fmw', :ensure => :present})}.to raise_error(Puppet::Error, /'name' should not be used/)
           end
+        end
+      end
+    end
+
+    describe 'services' do
+      it 'should support a single service' do
+        expect { described_class.new({:title => 'repo/item.fmw', :ensure => 'present', :source => '/path/to/item.fmw', :services => ['service1']})}.to_not raise_error
+        expect { described_class.new({:title => 'repo/item.fmw', :ensure => 'present', :source => '/path/to/item.fmw', :services => 'service1'})}.to_not raise_error
+      end
+      it 'should support multiple services as array of strings' do
+        expect { described_class.new({:title => 'repo/item.fmw', :ensure => 'present', :source => '/path/to/item.fmw', :services => ['service1','service2']})}.to_not raise_error
+      end
+      it 'should not support a comma separated list' do
+        expect { described_class.new({:title => 'repo/item.fmw', :ensure => 'present', :source => '/path/to/item.fmw', :services => 'service1,service2'})}.
+          to raise_error(Puppet::Error, /Services cannot include ','/)
+      end
+      it 'should not support a space separated list' do
+        expect { described_class.new({:title => 'repo/item.fmw', :ensure => 'present', :source => '/path/to/item.fmw', :services => 'service1 service2'})}.
+          to raise_error(Puppet::Error, /Services cannot include ' '/)
+      end
+      describe 'when testing is in sync' do
+        it 'should not care about order' do
+          @property = described_class.new(:title => 'repo/item.fmw', :ensure => 'present', :source => '/path/to/item.fmw', :services => ['s1','s2','s3']).property(:services)
+          expect(@property).to be_safe_insync([ 's1', 's2', 's3' ])
+          expect(@property).to be_safe_insync([ 's2', 's1', 's3' ])
+          expect(@property).to be_safe_insync([ 's3', 's1', 's2' ])
+          expect(@property).to be_safe_insync([ 's3', 's2', 's1' ])
         end
       end
     end
