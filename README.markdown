@@ -1,3 +1,5 @@
+[![Puppet Forge Version](https://img.shields.io/puppetforge/v/ordnancesurvey/fme.svg)](https://forge.puppetlabs.com/ordnancesurvey/fme)
+[![Puppet Forge Downloads](https://img.shields.io/puppetforge/dt/ordnancesurvey/fme.svg)](https://forge.puppetlabs.com/ordnancesurvey/fme)
 [![Build Status](https://img.shields.io/travis/OrdnanceSurvey/puppet-fme.svg)](https://travis-ci.org/OrdnanceSurvey/puppet-fme)
 [![Coverage Status](https://img.shields.io/coveralls/OrdnanceSurvey/puppet-fme.svg)](https://coveralls.io/github/OrdnanceSurvey/puppet-fme)
 
