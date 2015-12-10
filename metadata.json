@@ -1,7 +1,7 @@
 {
   "name": "ordnancesurvey-fme",
   "version": "0.1.0",
-  "author": "ordnancesurvey",
+  "author": "Ordnance Survey",
   "summary": "Types and Providers for FME Server Configuration",
   "license": "Apache-2.0",
   "source": "https://github.com/OrdnanceSurvey/puppet-fme.git",
