@@ -199,4 +199,31 @@ describe provider_class do
       end
     end
   end
+  describe 'when prefetching' do
+    before :each do
+      @resource_foo = Puppet::Type.type(:fme_user).new(:name => "foo")
+      @resource_bar = Puppet::Type.type(:fme_user).new(:name => "bar")
+      @resources = { "foo" => @resource_foo, "bar" => @resource_bar}
+    end
+    context 'when .instances returns some of the resources' do
+      before :each do
+        @only_provider_found = provider_class.new(@resource_foo)
+        provider_class.stubs(:instances).returns([@only_provider_found])
+      end
+      describe '.prefetch' do
+        context 'when provider for resource is found' do
+          it 'should set the resource\'s provider' do
+            @resource_foo.expects(:provider=).with(@only_provider_found)
+            provider_class.prefetch(@resources)
+          end
+        end
+        context 'when provider for resource is not found' do
+          it 'should not set the resource\'s provider' do
+            @resource_bar.expects(:provider=).never
+            provider_class.prefetch(@resources)
+          end
+        end
+      end
+    end
+  end
 end

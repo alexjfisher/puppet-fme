@@ -2,8 +2,9 @@ require 'json'
 require 'rest-client' if Puppet.features.restclient?
 
 require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'puppet_x', 'fme', 'helper.rb'))
+require File.join(File.dirname(__FILE__), '..', 'fme')
 
-Puppet::Type.type(:fme_repository).provide(:rest_client) do
+Puppet::Type.type(:fme_repository).provide(:rest_client, :parent => Puppet::Provider::Fme) do
   confine :feature => :restclient
 
   mk_resource_methods
@@ -25,18 +26,6 @@ Puppet::Type.type(:fme_repository).provide(:rest_client) do
       repo_properties[:description] = repo['description']
       new(repo_properties)
     end
-  end
-
-  def self.prefetch(resources)
-    instances.each do |prov|
-      if resource = resources[prov.name] # rubocop:disable Lint/AssignmentInCondition
-        resource.provider = prov
-      end
-    end
-  end
-
-  def exists?
-    @property_hash[:ensure] == :present
   end
 
   def create
