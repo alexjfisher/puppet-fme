@@ -35,14 +35,13 @@ Puppet::Type.type(:fme_resource).provide(:rest_client) do
   end
 
   def upload_file
-    validate_create_file
+    validate_source
     RestClient.post(get_post_url, read_source, post_params_for_upload_file) do |response, request, result, &block|
       fail "FME Rest API returned #{response.code} when uploading #{resource[:name]}. #{JSON.parse(response)}" unless response.code == 201
     end
   end
 
   def create_directory
-    validate_not_a_file
     RestClient.post(get_post_url, create_directory_post_request_body ) do |response, request, result, &block|
       fail "FME Rest API returned #{response.code} when creating directory #{resource[:name]}. #{JSON.parse(response)}" unless response.code == 201
     end
@@ -52,14 +51,6 @@ Puppet::Type.type(:fme_resource).provide(:rest_client) do
     directory_name = Pathname(resource[:path]).basename.to_s
     request_body = URI.encode_www_form( :directoryname => directory_name, :type => 'DIR' )
     request_body
-  end
-
-  def is_file?
-    @property_hash[:ensure] == :file or @property_hash[:ensure] == :present
-  end
-
-  def is_directory?
-    @property_hash[:ensure] == :directory
   end
 
   def has_source?
@@ -72,21 +63,8 @@ Puppet::Type.type(:fme_resource).provide(:rest_client) do
     data
   end
 
-  def validate_create_file
-    validate_source
-    validate_not_a_directory
-  end
-
   def validate_source
     fail "source is required when creating new resource file" unless has_source?
-  end
-
-  def validate_not_a_directory
-    fail "#{resource[:path]} already exists as a directory.  Replacing with a file is not currently supported" if is_directory?
-  end
-
-  def validate_not_a_file
-    fail "#{resource[:path]} already exists as a file.  Replacing with a directory is not currently supported" if is_file?
   end
 
   def get_post_url

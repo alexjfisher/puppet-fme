@@ -28,12 +28,22 @@ Puppet::Type.newtype(:fme_resource) do
 
   ensurable do
     newvalue(:file) do
-      provider.upload_file
+      current = self.retrieve
+      if current == :absent
+        provider.upload_file
+      elsif current == :file
+        @original_size = provider.properties[:size]
+        provider.destroy
+        provider.upload_file
+      elsif current == :directory
+        fail "Cannot replace a directory with a file!"
+      end
     end
 
     aliasvalue(:present, :file)
 
     newvalue(:directory) do
+      fail "Cannot replace a file with a directory!" if self.retrieve == :file
       provider.create_directory
     end
 
@@ -43,6 +53,39 @@ Puppet::Type.newtype(:fme_resource) do
 
     def retrieve
       provider.properties[:ensure]
+    end
+
+    def insync?(is)
+      return false if should == :file and is == :file and provider.properties[:size] != size_of_source
+      super
+    end
+
+    def change_to_s(currentvalue, newvalue)
+      return "uploaded new file" if new_file?(currentvalue, newvalue)
+      return "created directory" if new_directory?(currentvalue, newvalue)
+      return "deleted file"      if deleted_file?(currentvalue, newvalue)
+      return "deleted directory" if deleted_directory?(currentvalue, newvalue)
+      "replaced file of size #{@original_size} bytes with one of #{size_of_source} bytes"
+    end
+
+    def size_of_source
+      File.size?(@resource.original_parameters[:source])
+    end
+
+    def new_file?(currentvalue, newvalue)
+      currentvalue == :absent and newvalue == :file
+    end
+
+    def new_directory?(currentvalue, newvalue)
+      currentvalue == :absent and newvalue == :directory
+    end
+
+    def deleted_file?(currentvalue, newvalue)
+      currentvalue == :file and newvalue == :absent
+    end
+
+    def deleted_directory?(currentvalue, newvalue)
+      currentvalue == :directory and newvalue == :absent
     end
   end
 
