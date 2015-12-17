@@ -1,3 +1,4 @@
+require 'puppet/parameter/boolean'
 Puppet::Type.newtype(:fme_resource) do
   desc "Puppet type to manage FME shared resources"
 
@@ -57,6 +58,9 @@ Puppet::Type.newtype(:fme_resource) do
 
     def insync?(is)
       return false if should == :file and is == :file and provider.properties[:size] != size_of_source
+      debug "File sizes matched"
+      return false if should == :file and is == :file and @resource.original_parameters[:checksum] and provider.checksum != checksum_of_source
+      debug "Checksums matched"
       super
     end
 
@@ -70,6 +74,16 @@ Puppet::Type.newtype(:fme_resource) do
 
     def size_of_source
       File.size?(@resource.original_parameters[:source])
+    end
+
+    def checksum_of_source
+      sha256 = Digest::SHA256.new
+      open(@resource.original_parameters[:source]) do |s|
+        while chunk = s.read(1024)
+          sha256 << chunk
+        end
+      end
+      sha256
     end
 
     def new_file?(currentvalue, newvalue)
@@ -102,12 +116,13 @@ Puppet::Type.newtype(:fme_resource) do
     end
   end
 
-  newparam(:resource, :namevar => true) do
-    #TODO Rename this to something less confusing??
+  newparam(:checksum, :boolean => true, :parent => Puppet::Parameter::Boolean) do
+    desc "Whether to fetch remote files and checksum them"
+    defaultto(false)
   end
 
-  newproperty(:size) do
-    validate { |val| fail "size is read-only" }
+  newparam(:resource, :namevar => true) do
+    #TODO Rename this to something less confusing??
   end
 
   newparam(:name) do

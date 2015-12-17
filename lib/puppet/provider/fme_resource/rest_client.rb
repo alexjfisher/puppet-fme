@@ -1,5 +1,6 @@
 require 'json'
 require 'rest-client' if Puppet.features.restclient?
+require 'digest'
 
 require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'puppet_x', 'fme', 'helper.rb'))
 require File.join(File.dirname(__FILE__), '..', 'fme')
@@ -24,6 +25,21 @@ Puppet::Type.type(:fme_resource).provide(:rest_client) do
         fail "FME Rest API returned #{response.code} when getting metadata for #{resource[:name]}. #{JSON.parse(response)}"
       end
     end
+  end
+
+  def checksum
+    debug "checksumming"
+    url = "#{@baseurl}/resources/connections/#{resource[:resource]}/filesys#{resource[:path]}"
+    sha256_checksum = Digest::SHA256.new
+    perform_checksum = Proc.new do |http_response|
+      http_response.read_body do |chunk|
+        sha256_checksum << chunk
+      end
+    end
+    headers = { 'accept' => 'application/octet-stream' }
+    response = RestClient::Request.execute(:method => :get, :url => url, :headers => headers, :block_response => perform_checksum)
+    raise Puppet::Error, "Error calculating checksum #{response.code}" unless response.code == '200'
+    sha256_checksum
   end
 
   def extract_metadata_from_response(json)
