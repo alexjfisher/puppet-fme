@@ -37,4 +37,5 @@ group :system_tests do
   gem "beaker"
   gem "beaker-rspec"
   gem "beaker-puppet_install_helper"
+  gem "beaker_spec_helper"
 end
