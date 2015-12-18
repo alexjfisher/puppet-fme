@@ -57,11 +57,21 @@ Puppet::Type.newtype(:fme_resource) do
     end
 
     def insync?(is)
-      return false if should == :file and is == :file and provider.properties[:size] != size_of_source
-      debug "File sizes matched"
-      return false if should == :file and is == :file and @resource.original_parameters[:checksum] and provider.checksum != checksum_of_source
-      debug "Checksums matched"
+      if should == :file and is == :file
+        return false unless sizes_match?
+        if @resource.original_parameters[:checksum]
+          return false unless checksums_match?
+        end
+      end
       super
+    end
+
+    def sizes_match?
+      provider.properties[:size] == size_of_source
+    end
+
+    def checksums_match?
+      provider.checksum == checksum_of_source
     end
 
     def change_to_s(currentvalue, newvalue)
@@ -79,7 +89,7 @@ Puppet::Type.newtype(:fme_resource) do
     def checksum_of_source
       sha256 = Digest::SHA256.new
       open(@resource.original_parameters[:source]) do |s|
-        while chunk = s.read(1024)
+        while chunk = s.read(1024) # rubocop:disable Lint/AssignmentInCondition
           sha256 << chunk
         end
       end

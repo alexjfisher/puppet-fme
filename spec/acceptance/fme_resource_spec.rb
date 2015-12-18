@@ -33,7 +33,7 @@ describe 'fme_resource' do
           apply_manifest(pp, :catch_failures => true)
         end
         it 'should work idempotently' do
-          apply_manifest(pp, :catch_changes  => true)
+          apply_manifest(pp, :catch_changes => true)
         end
         describe command("curl -H 'Accept: application/octet-stream' --user admin:admin http://#{ENV['FMESERVER']}/fmerest/v2/resources/connections/FME_SHAREDRESOURCE_DATA/filesys/puppet_test_data/testfile") do
           its(:stdout) { should match /Test file data/ }
@@ -52,7 +52,7 @@ describe 'fme_resource' do
           apply_manifest(pp, :catch_failures => true)
         end
         it 'should work idempotently' do
-          apply_manifest(pp, :catch_changes  => true)
+          apply_manifest(pp, :catch_changes => true)
         end
       end
     end
@@ -76,7 +76,7 @@ describe 'fme_resource' do
             source => '/tmp/file2',
           }
           EOS
-          apply_manifest(pp, :catch_changes  => true)
+          apply_manifest(pp, :catch_changes => true)
         end
       end
       context 'when files are different sizes' do
@@ -122,7 +122,7 @@ describe 'fme_resource' do
             checksum => false,
           }
           EOS
-          apply_manifest(pp, :catch_changes  => true)
+          apply_manifest(pp, :catch_changes => true)
         end
       end
       context 'when checksum=true' do
