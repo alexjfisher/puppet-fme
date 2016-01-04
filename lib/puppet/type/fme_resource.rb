@@ -128,7 +128,7 @@ Puppet::Type.newtype(:fme_resource) do
 
   newparam(:checksum, :boolean => true, :parent => Puppet::Parameter::Boolean) do
     desc "Whether to fetch remote files and checksum them"
-    defaultto(false)
+    defaultto :false
   end
 
   newparam(:resource, :namevar => true) do
