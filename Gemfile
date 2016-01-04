@@ -23,6 +23,7 @@ group :test do
   gem "rest-client"
   gem "webmock"
   gem "mocha"
+  gem "fakefs"
 end
 
 group :development do
