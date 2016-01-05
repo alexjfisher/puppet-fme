@@ -22,7 +22,7 @@ Puppet::Type.type(:fme_resource).provide(:rest_client) do
       when 404
         return {}
       else
-        fail "FME Rest API returned #{response.code} when getting metadata for #{resource[:name]}. #{JSON.parse(response)}"
+        fail "FME Rest API returned #{response.code} when getting metadata for #{resource}:#{path}. #{JSON.parse(response)}"
       end
     end
   end
@@ -75,8 +75,8 @@ Puppet::Type.type(:fme_resource).provide(:rest_client) do
   end
 
   def read_source
-    data = File.new(resource[:source])
-    data
+    file = File.new(resource[:source], 'rb')
+    file.read
   end
 
   def validate_source
