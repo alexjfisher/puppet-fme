@@ -37,9 +37,8 @@ describe provider_class do
         stub_request(:get, "http://www.example.com/resources/connections/FME_SHAREDRESOURCE_DATA/filesys//path/to/resource?depth=0&detail=low").
           to_return(:status => 404)
       end
-      it 'should return empty hash' do
-        expect(provider.get_file_metadata('FME_SHAREDRESOURCE_DATA','/path/to/resource')).to be_kind_of(Hash)
-        expect(provider.get_file_metadata('FME_SHAREDRESOURCE_DATA','/path/to/resource')).to be_empty
+      it 'should return nil' do
+        expect(provider.get_file_metadata('FME_SHAREDRESOURCE_DATA','/path/to/resource')).to be_nil
       end
     end
     context 'when response code is 403' do
