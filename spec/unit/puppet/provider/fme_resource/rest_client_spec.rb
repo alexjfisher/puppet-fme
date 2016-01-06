@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'fakefs/spec_helpers'
+require 'digest'
 
 provider_class = Puppet::Type.type(:fme_resource).provider(:rest_client)
 describe provider_class do
@@ -47,10 +48,130 @@ describe provider_class do
           to_return(:status => 403, :body => {'response' => 'hash'}.to_json)
       end
       it 'should raise exception' do
-        #FME Rest API returned #{response.code} when getting metadata for #{resource[:name]}. #{JSON.parse(response)}
         expect{provider.get_file_metadata('FME_SHAREDRESOURCE_DATA','/path/to/resource')}.
           to raise_error(Puppet::Error,
                          /FME Rest API returned 403 when getting metadata for FME_SHAREDRESOURCE_DATA:\/path\/to\/resource\. {"response"=>"hash"}/)
+      end
+    end
+  end
+
+  describe '#checksum' do
+    context 'when API success' do
+      it 'should return checksum of data' do
+        mock_data = 'DATA'
+        expected_checksum = Digest::SHA256.new
+        expected_checksum << mock_data
+
+        stub_request(:get, "http://www.example.com/resources/connections/FME_SHAREDRESOURCE_DATA/filesys/path/to/resource").
+          to_return(:status => 200, :body => mock_data)
+
+        checksum = provider.checksum
+        expect(checksum).to eq expected_checksum
+      end
+    end
+    context 'on API failure' do
+      it 'should raise error' do
+        stub_request(:get, "http://www.example.com/resources/connections/FME_SHAREDRESOURCE_DATA/filesys/path/to/resource").
+          to_return(:status => 404)
+        expect{provider.checksum}.
+          to raise_error(Puppet::Error, /Error calculating checksum 404/)
+      end
+    end
+  end
+
+  describe '#extract_metadata_from_response' do
+    context 'when response is for a file' do
+      metadata = nil
+      before :each do
+        response = { 'type' => 'FILE', 'path' => '/foo/bar/', 'name' => 'testfile', 'size' => 42 }
+        metadata = provider.extract_metadata_from_response(response)
+      end
+      it 'should return a hash' do
+        expect(metadata).to be_kind_of(Hash)
+      end
+      it 'should set :ensure => :file' do
+        expect(metadata[:ensure]).to eq :file
+      end
+      it 'should set :path correctly' do
+        expect(metadata[:path]).to eq '/foo/bar/testfile'
+      end
+      it 'should set :size correctly' do
+        expect(metadata[:size]).to eq 42
+      end
+    end
+    context 'when response is for a directory' do
+      metadata = nil
+      before :each do
+        response = { 'type' => 'DIR', 'path' => '/foo/bar/', 'name' => 'foobar', 'size' => 0 }
+        metadata = provider.extract_metadata_from_response(response)
+      end
+      it 'should return a hash' do
+        expect(metadata).to be_kind_of(Hash)
+      end
+      it 'should set :ensure => :directory' do
+        expect(metadata[:ensure]).to eq :directory
+      end
+      it 'should set :path correctly' do
+        expect(metadata[:path]).to eq '/foo/bar/foobar'
+      end
+      it 'should not set :size' do
+        expect(metadata[:size]).to be_nil
+      end
+    end
+  end
+
+  describe '#upload_file' do
+    describe 'validation' do
+      it 'should call validate_source' do
+        provider.expects(:validate_source)
+        provider.stubs(:read_source).returns('DATA')
+        RestClient.stubs(:post)
+        provider.upload_file
+      end
+    end
+    describe 'API post' do
+      before :each do
+        provider.stubs(:validate_source)
+        provider.stubs(:read_source).returns('DATA')
+        provider.stubs(:get_post_url).returns('http://URL')
+        provider.stubs(:post_params_for_upload_file).returns({'post' => 'params'})
+      end
+      context 'when successful' do
+        it 'should not raise any error' do
+          stub_request(:post, "http://url/").
+            with(:body => "DATA", :headers => {'Post'=>'params'}).
+            to_return(:status => 201, :body => "")
+          expect{provider.upload_file}.to_not raise_error
+        end
+      end
+      context 'when unsuccessful' do
+        it 'should raise error' do
+          stub_request(:post, "http://url/").
+            with(:body => "DATA", :headers => {'Post'=>'params'}).
+            to_return(:status => 409, :body => '{"what": "/for/bar/upload", "reason": "exists", "message": "File \'upload\' already exists"}')
+          expect{provider.upload_file}.to raise_error(Puppet::Error, /FME Rest API returned 409 when uploading FME_SHAREDRESOURCE_DATA:\/path\/to\/resource\. {"what"=>"\/for\/bar\/upload", "reason"=>"exists", "message"=>"File 'upload' already exists"/)
+        end
+      end
+    end
+  end
+  describe '#create_directory' do
+    before :each do
+      provider.stubs(:get_post_url).returns('http://URL')
+    end
+    context 'when successful' do
+      it 'should not raise any error' do
+        stub_request(:post, "http://url/").
+          with(:body => "directoryname=resource&type=DIR").
+          to_return(:status => 201)
+        expect{provider.create_directory}.to_not raise_error
+      end
+    end
+    context 'when unsuccessful' do
+      it 'should raise error' do
+        stub_request(:post, "http://url/").
+          with(:body => "directoryname=resource&type=DIR").
+          to_return(:status => 409, :body => '{"what": "/for/bar/testdir", "reason": "exists", "message": "Directory \'testdir\' already exists"}')
+        expect{provider.create_directory}.to raise_error(Puppet::Error, /FME Rest API returned 409 when creating directory FME_SHAREDRESOURCE_DATA:\/path\/to\/resource\. {"what"=>"\/for\/bar\/testdir", "reason"=>"exists", "message"=>"Directory 'testdir' already exists"/)
       end
     end
   end
@@ -109,6 +230,26 @@ describe provider_class do
       expect(provider.instance_variable_get(:@property_hash)).to eq :ensure => :file
       provider.destroy
       expect(provider.instance_variable_get(:@property_hash)).to be_empty
+    end
+  end
+
+  describe '#properties' do
+    context 'when property hash is empty' do
+      before :each do
+        provider.instance_variable_set(:@property_hash,{})
+      end
+      context 'when resource is found' do
+        it 'should return result of get_file_metadata' do
+          provider.expects(:get_file_metadata).returns({ :ensure => :file })
+          expect(provider.properties).to eq({ :ensure => :file })
+        end
+      end
+      context 'when resource is not found' do
+        it 'should set :ensure => :absent' do
+          provider.expects(:get_file_metadata).returns nil
+          expect(provider.properties).to eq({ :ensure => :absent })
+        end
+      end
     end
   end
 end

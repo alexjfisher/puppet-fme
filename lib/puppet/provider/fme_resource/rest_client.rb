@@ -20,7 +20,7 @@ Puppet::Type.type(:fme_resource).provide(:rest_client) do
       when 200
         extract_metadata_from_response(JSON.parse(response))
       when 404
-        return {}
+        return nil
       else
         fail "FME Rest API returned #{response.code} when getting metadata for #{resource}:#{path}. #{JSON.parse(response)}"
       end
@@ -28,7 +28,6 @@ Puppet::Type.type(:fme_resource).provide(:rest_client) do
   end
 
   def checksum
-    debug "checksumming"
     url = "#{@baseurl}/resources/connections/#{resource[:resource]}/filesys#{resource[:path]}"
     sha256_checksum = Digest::SHA256.new
     perform_checksum = Proc.new do |http_response|
@@ -105,10 +104,7 @@ Puppet::Type.type(:fme_resource).provide(:rest_client) do
   end
 
   def properties
-    if @property_hash.empty?
-      @property_hash = get_file_metadata(resource[:resource], resource[:path]) || {:ensure => :absent}
-      @property_hash[:ensure] = :absent if @property_hash.empty?
-    end
+    @property_hash = get_file_metadata(resource[:resource], resource[:path]) || {:ensure => :absent} if @property_hash.empty?
     @property_hash.dup
   end
 end
