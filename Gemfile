@@ -23,6 +23,7 @@ group :test do
   gem "rest-client"
   gem "webmock"
   gem "mocha"
+  gem "fakefs"
 end
 
 group :development do
@@ -36,4 +37,5 @@ group :system_tests do
   gem "beaker"
   gem "beaker-rspec"
   gem "beaker-puppet_install_helper"
+  gem "beaker_spec_helper"
 end
