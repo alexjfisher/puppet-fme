@@ -30,15 +30,15 @@ Puppet::Type.type(:fme_repository_item).provide(:rest_client, :parent => Puppet:
     response = RestClient.get(url, {:params => {'detail' => 'high'}, :accept => :json})
     items = JSON.parse(response)
     items.collect do |item|
-      item_properties = { ensure:         :present,
-                          provider:       :rest_client,
-                          item:           item['name'],
-                          description:    item['description'],
-                          item_title:     item['title'],
-                          type:           item['type'],
-                          last_save_date: item['lastSaveDate'],
-                          repository:     repo,
-                          name:           "#{repo}/#{item['name']}" }
+      item_properties = { :ensure         => :present,
+                          :provider       => :rest_client,
+                          :item           => item['name'],
+                          :description    => item['description'],
+                          :item_title     => item['title'],
+                          :type           => item['type'],
+                          :last_save_date => item['lastSaveDate'],
+                          :repository     => repo,
+                          :name           => "#{repo}/#{item['name']}" }
       item_properties
     end
   end
@@ -91,15 +91,15 @@ Puppet::Type.type(:fme_repository_item).provide(:rest_client, :parent => Puppet:
 
   def set_property_hash_from_create_response(response)
     response = JSON.parse(response)
-    @property_hash = { ensure:         :present,
-                       provider:       :rest_client,
-                       item:           response['name'],
-                       description:    response['description'],
-                       item_title:     response['title'],
-                       type:           response['type'],
-                       last_save_date: response['lastSaveDate'],
-                       repository:     resource[:repository],
-                       name:           "#{resource[:repository]}/#{response['name']}" }
+    @property_hash = { :ensure         => :present,
+                       :provider       => :rest_client,
+                       :item           => response['name'],
+                       :description    => response['description'],
+                       :item_title     => response['title'],
+                       :type           => response['type'],
+                       :last_save_date => response['lastSaveDate'],
+                       :repository     => resource[:repository],
+                       :name           => "#{resource[:repository]}/#{response['name']}" }
   end
 
   def destroy
