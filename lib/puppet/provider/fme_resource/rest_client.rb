@@ -7,6 +7,11 @@ require File.join(File.dirname(__FILE__), '..', 'fme')
 
 Puppet::Type.type(:fme_resource).provide(:rest_client) do
   confine :feature => :restclient
+  if Puppet::Util::Platform.windows?
+    confine :exists => 'C:/fme_api_settings.yaml'
+  else
+    confine :exists => '/etc/fme_api_settings.yaml'
+  end
 
   def initialize(value={})
     super(value)
