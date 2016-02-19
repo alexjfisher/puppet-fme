@@ -6,6 +6,11 @@ require File.join(File.dirname(__FILE__), '..', 'fme')
 
 Puppet::Type.type(:fme_user).provide(:rest_client, :parent => Puppet::Provider::Fme) do
   confine :feature => :restclient
+  if Puppet::Util::Platform.windows?
+    confine :exists => 'C:/fme_api_settings.yaml'
+  else
+    confine :exists => '/etc/fme_api_settings.yaml'
+  end
 
   mk_resource_methods
 

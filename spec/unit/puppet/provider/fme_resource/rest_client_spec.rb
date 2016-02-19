@@ -190,15 +190,16 @@ describe provider_class do
   end
 
   describe '#read_source' do
-    include FakeFS::SpecHelpers
     it 'should return data from source file' do
       mock_source_file = '/testfile'
-      mock_data = 'DATA'
-      File.open(mock_source_file,'w') do |f|
-        f.write mock_data
-      end
       resource[:source] = mock_source_file
-      expect(provider.read_source).to eq mock_data
+      mock_data = 'DATA'
+      FakeFS do
+        File.open(mock_source_file,'w') do |f|
+          f.write mock_data
+        end
+        expect(provider.read_source).to eq mock_data
+      end
     end
   end
 
