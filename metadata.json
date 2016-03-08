@@ -1,6 +1,6 @@
 {
   "name": "ordnancesurvey-fme",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": "Ordnance Survey",
   "summary": "Types and Providers for FME Server Configuration",
   "license": "Apache-2.0",
