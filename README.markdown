@@ -33,6 +33,13 @@ The types provided by this module use the FME Server v2 REST API to configure va
 ### Setup Requirements
 
 Before using any of the types, the `/etc/fme_api_settings.yaml` file must first be created.  This can be done using the `fme::api_settings` class.
+The providers all use rest-client.  Rest-client can usually be installed with puppet.  eg
+```
+package { 'rest-client':
+  ensure   => 'installed',
+  provider => 'gem',
+}
+```
 
 ### Beginning with fme
 
@@ -45,7 +52,7 @@ Before using any of these types, declare the fme::api_settings class and this wi
 
 All the types autorequire the settings file.
 
-Here is a simple example that creates a user and uploads a workspace to a repository.
+Here is a simple example that creates a user, uploads a workspace to a repository and uploads an `fme resource`
 
 ```
 class {'fme::api_settings':
@@ -65,6 +72,12 @@ fme_repository {'my_repo':
 fme_repository_item {'my_repo/item.fmw':
   ensure => present,
   source => '/path/to/item.fmw',
+}
+
+fme_resource {'FME_SHAREDRESOURCE_DATA:/foo/my_resource.data':
+  ensure   => file,
+  checksum => true,
+  source   => '/path/to/my_resource.data',
 }
 
 ```
