@@ -1,7 +1,37 @@
 Puppet::Type.newtype(:fme_repository_item) do
   desc "Puppet type that manages FME repository item"
 
-  ensurable
+  ensurable do
+    newvalue(:present) do
+      provider.destroy if provider.exists?
+      provider.create
+    end
+
+    newvalue(:absent) do
+      provider.destroy
+    end
+
+    defaultto(:present)
+
+    def insync?(is)
+      return false if is == :present and !items_match?
+      super
+    end
+
+    def items_match?
+      checksum_of_source == provider.checksum
+    end
+
+    def checksum_of_source
+      sha256 = Digest::SHA256.new
+      open(@resource.original_parameters[:source]) do |s|
+        while chunk = s.read(1024) # rubocop:disable Lint/AssignmentInCondition
+          sha256 << chunk
+        end
+      end
+      sha256
+    end
+  end
 
   autorequire(:file) do
     Fme::Helper.settings_file

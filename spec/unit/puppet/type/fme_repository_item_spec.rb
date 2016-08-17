@@ -1,4 +1,6 @@
 require 'spec_helper'
+require 'digest'
+require 'fakefs/spec_helpers'
 
 describe Puppet::Type.type(:fme_repository_item) do
   before :each do
@@ -30,6 +32,16 @@ describe Puppet::Type.type(:fme_repository_item) do
 
   describe 'when validating attribute values' do
     describe 'ensure' do
+      before :each do
+        @provider_class = Puppet::Type.type(:fme_repository_item).provider(:rest_client)
+        @provider = stub( 'provider', :class => @provider_class, :clear => nil )
+        @provider_class.stubs(:new).returns(@provider)
+
+        Puppet::Type.type(:fme_repository_item).stubs(:defaultprovider).returns @provider_class
+
+        @resource = Puppet::Type.type(:fme_repository_item).new({:title => 'repo:/item.fmw', :ensure => :present, :source => '/path/to/item.fmw' })
+        @property = @resource.property(:ensure)
+      end
       [ :present, :absent ].each do |value|
         it "should support #{value} as a value to ensure" do
           expect { described_class.new( {:title => 'repo/item.fmw', :source => '/path/to/item.fmw', :ensure => value})}.to_not raise_error
@@ -37,6 +49,86 @@ describe Puppet::Type.type(:fme_repository_item) do
       end
       it 'should not support other values' do
         expect { described_class.new( {:title => 'repo/item.fmw',:ensure => 'foo'})}.to raise_error(Puppet::Error, /Invalid value/)
+      end
+      describe "#sync" do
+        context 'should = :present' do
+          before :each do
+            @property.should = :present
+          end
+          describe 'when already exists' do
+            it 'should remove then reupload workspace' do
+              @provider.expects(:exists?).returns(true)
+              @provider.expects(:destroy)
+              @provider.expects(:create)
+              @property.sync
+            end
+          end
+          describe 'when it doesn\'t exist' do
+            it 'should upload workspace' do
+              @provider.expects(:exists?).returns(false)
+              @provider.expects(:destroy).never
+              @provider.expects(:create)
+              @property.sync
+            end
+          end
+        end
+        context 'should = :absent' do
+          it 'should call provider.destroy' do
+            @property.should = :absent
+            @provider.expects(:destroy)
+            @property.sync
+          end
+        end
+      end
+      describe 'when testing whether :ensure is in sync' do
+        it 'should be in sync if :ensure is set to :absent and the provider rep  orts the resource as absent' do
+          @property.should = :absent
+          expect(@property).to be_safe_insync(:absent)
+        end
+        it 'should be in sync if :ensure is set to :present and provider reports resource present and matching' do
+          @property.should = :present
+          @property.expects(:items_match?).returns true
+          expect(@property).to be_safe_insync(:present)
+        end
+        it 'should not be insync if items don\'t match' do
+          @property.should = :present
+          @property.expects(:items_match?).returns false
+          expect(@property).not_to be_safe_insync(:present)
+        end
+      end
+      describe '.items_match?' do
+        it 'returns true when checksums match' do
+          data = 'Matching DATA'
+          provider_checksum = Digest::SHA256.new
+          source_checksum = Digest::SHA256.new
+          provider_checksum << data
+          source_checksum   << data
+          @provider.expects(:checksum).returns provider_checksum
+          @property.expects(:checksum_of_source).returns source_checksum
+          expect(@property.items_match?).to eq true
+        end
+        it 'returns false when checksums don\'t match' do
+          provider_checksum = Digest::SHA256.new
+          source_checksum = Digest::SHA256.new
+          provider_checksum << 'DATA'
+          source_checksum   << 'Non-matching DATA'
+          @provider.expects(:checksum).returns provider_checksum
+          @property.expects(:checksum_of_source).returns source_checksum
+          expect(@property.items_match?).to eq false
+        end
+      end
+    describe '.checksum_of_source' do
+        include FakeFS::SpecHelpers
+        it 'returns the checksum of the source file' do
+          mock_source_file = '/path/to/item.fmw'
+          FileUtils.mkdir_p '/path/to'
+          File.open(mock_source_file,'w') do |f|
+            f.write 'DATA'
+          end
+          #echo -n "DATA" | sha256sum -
+          #c97c29c7a71b392b437ee03fd17f09bb10b75e879466fc0eb757b2c4a78ac938
+          expect(@property.checksum_of_source.hexdigest).to eq "c97c29c7a71b392b437ee03fd17f09bb10b75e879466fc0eb757b2c4a78ac938"
+        end
       end
     end
 
