@@ -325,6 +325,21 @@ describe provider_class do
           expect(provider.instance_variable_get("@property_hash")[:services]).to eq(['service2'])
         end
       end
+      describe '#checksum' do
+        context 'when API success' do
+          it 'should return checksum of data' do
+            mock_data = 'DATA'
+            expected_checksum = Digest::SHA256.new
+            expected_checksum << mock_data
+
+            stub_request(:get, "http://www.example.com/repositories/repo/items/item.fmw").
+              to_return(:status => 200, :body => mock_data)
+
+            checksum = provider.checksum
+            expect(checksum).to eq expected_checksum
+          end
+        end
+      end
     end
   end
 end

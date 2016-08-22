@@ -1,5 +1,6 @@
 require 'json'
 require 'rest-client' if Puppet.features.restclient?
+require 'digest'
 
 require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'puppet_x', 'fme', 'helper.rb'))
 require File.join(File.dirname(__FILE__), '..', 'fme')
@@ -108,6 +109,7 @@ Puppet::Type.type(:fme_repository_item).provide(:rest_client, :parent => Puppet:
   end
 
   def destroy
+    Puppet.debug "Deleting repository_item"
     RestClient.delete("#{@baseurl}/repositories/#{resource[:repository]}/items/#{resource[:item]}", :accept => :json)
     @property_hash.clear
   end
@@ -151,5 +153,19 @@ Puppet::Type.type(:fme_repository_item).provide(:rest_client, :parent => Puppet:
     #"The response body contains information about the result of the registration operation, indicating success or error status for each service"
     @property_hash[:services] = JSON.parse(response).map { |service| service['name'] if service['status'] == 200}.compact
     raise Puppet::Error, "The following services couldn't be added to #{resource[:name]}: #{services-@property_hash[:services]}"
+  end
+
+  def checksum
+    url = "#{@baseurl}/repositories/#{resource[:repository]}/items/#{resource[:item]}"
+    sha256_checksum = Digest::SHA256.new
+    perform_checksum = Proc.new do |http_response|
+      http_response.read_body do |chunk|
+        sha256_checksum << chunk
+      end
+    end
+    headers = { 'accept' => 'application/octet-stream' }
+    response = RestClient::Request.execute(:method => :get, :url => url, :headers => headers, :block_response => perform_checksum)
+    raise Puppet::Error, "Error calculating checksum #{response.code}" unless response.code == '200'
+    sha256_checksum
   end
 end
