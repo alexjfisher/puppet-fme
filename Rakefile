@@ -7,7 +7,11 @@ require 'puppet/vendor/semantic/lib/semantic' unless Puppet.version.to_f < 3.6
 require 'puppet-lint/tasks/puppet-lint'
 require 'puppet-syntax/tasks/puppet-syntax'
 require 'metadata-json-lint/rake_task'
-require 'rubocop/rake_task'
+begin
+  require 'rubocop/rake_task'
+  RuboCop::RakeTask.new
+rescue LoadError # rubocop:disable Lint/HandleExceptions
+end
 
 # These gems aren't always present, for instance
 # on Travis with --without development
@@ -15,8 +19,6 @@ begin
   require 'puppet_blacksmith/rake_tasks'
 rescue LoadError # rubocop:disable Lint/HandleExceptions
 end
-
-RuboCop::RakeTask.new
 
 exclude_paths = [
   "bundle/**/*",
@@ -54,6 +56,5 @@ task :test => [
   :metadata_lint,
   :syntax,
   :lint,
-  :rubocop,
   :spec
 ]
