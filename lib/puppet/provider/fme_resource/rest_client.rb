@@ -50,7 +50,7 @@ Puppet::Type.type(:fme_resource).provide(:rest_client) do
     metadata = { :ensure => :file      } if json['type'] == 'FILE'
     metadata = { :ensure => :directory } if json['type'] == 'DIR'
     metadata[:path] = "#{json['path']}#{json['name']}"
-    metadata[:size] = json['size'] unless json['size'] == 0
+    metadata[:size] = json['size'] unless (json['size']).zero?
     metadata
   end
 
@@ -92,12 +92,13 @@ Puppet::Type.type(:fme_resource).provide(:rest_client) do
   end
 
   def post_params_for_upload_file
-    params = { :multipart           => true,
-               :content_type        => 'application/octet-stream',
-               :content_disposition => "attachment; filename=\"#{File.basename(resource[:path])}\"",
-               :accept              => 'json',
-               'detail'             => 'low',
-               'createDirectories'  => true
+    params = {
+      :multipart           => true,
+      :content_type        => 'application/octet-stream',
+      :content_disposition => "attachment; filename=\"#{File.basename(resource[:path])}\"",
+      :accept              => 'json',
+      'detail'             => 'low',
+      'createDirectories'  => true
     }
     params
   end

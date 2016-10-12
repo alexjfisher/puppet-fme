@@ -7,7 +7,11 @@ require 'puppet/vendor/semantic/lib/semantic' unless Puppet.version.to_f < 3.6
 require 'puppet-lint/tasks/puppet-lint'
 require 'puppet-syntax/tasks/puppet-syntax'
 require 'metadata-json-lint/rake_task'
-require 'rubocop/rake_task'
+begin
+  require 'rubocop/rake_task'
+  RuboCop::RakeTask.new
+rescue LoadError # rubocop:disable Lint/HandleExceptions
+end
 
 # These gems aren't always present, for instance
 # on Travis with --without development
@@ -16,18 +20,12 @@ begin
 rescue LoadError # rubocop:disable Lint/HandleExceptions
 end
 
-RuboCop::RakeTask.new
-
 exclude_paths = [
   "bundle/**/*",
   "pkg/**/*",
   "vendor/**/*",
-  "spec/**/*",
+  "spec/**/*"
 ]
-
-# Coverage from puppetlabs-spec-helper requires rcov which
-# doesn't work in anything since 1.8.7
-Rake::Task[:coverage].clear
 
 Rake::Task[:lint].clear
 
@@ -58,6 +56,5 @@ task :test => [
   :metadata_lint,
   :syntax,
   :lint,
-  :rubocop,
-  :spec,
+  :spec
 ]

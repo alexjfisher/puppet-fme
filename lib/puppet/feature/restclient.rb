@@ -1,1 +1,1 @@
-Puppet.features.add(:restclient, :libs => ["rest_client"])
+Puppet.features.add(:restclient, :libs => ['rest_client'])

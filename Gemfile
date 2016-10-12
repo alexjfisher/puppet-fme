@@ -8,7 +8,6 @@ group :test do
   gem "puppetlabs_spec_helper"
   gem "metadata-json-lint"
   gem "rspec-puppet-facts"
-  gem 'rubocop', '0.33.0'
   gem 'simplecov', '>= 0.9.0'
   gem 'simplecov-console'
   gem 'coveralls', :require => false
@@ -21,18 +20,20 @@ group :test do
   gem "puppet-lint-unquoted_string-check"
 
   gem "rest-client"
-  gem "webmock"
+  gem "webmock", '< 2.0'
   gem "mocha"
   gem "fakefs"
 
   if RUBY_VERSION < '2.0'
-    gem 'json',        '~> 1.8'
-    gem 'json_pure',   '= 2.0.1'
-    gem 'addressable', '= 2.3.8'
-    gem 'tins',        '= 1.6.0'
+    gem 'json',           '~> 1.8'
+    gem 'json_pure',      '= 2.0.1'
+    gem 'addressable',    '= 2.3.8'
+    gem 'tins',           '= 1.6.0'
+    gem 'term-ansicolor', '< 1.4.0'
   else
     gem 'json'
     gem 'tins'
+    gem 'rubocop', '0.43.0'
   end
 end
 
