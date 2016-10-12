@@ -87,7 +87,7 @@ Puppet::Type.newtype(:fme_repository_item) do
       if value.empty? and resource[:repository] and resource[:item]
        "#{resource[:repository]}/#{resource[:item]}"
       else
-        fail "Use resource name style <repository>/<item> OR specify both 'repository' and 'item'" unless value.match /^(.*)\/(.*)$/
+        fail "Use resource name style <repository>/<item> OR specify both 'repository' and 'item'" unless value =~ /^(.*)\/(.*)$/
         value
       end
     end
