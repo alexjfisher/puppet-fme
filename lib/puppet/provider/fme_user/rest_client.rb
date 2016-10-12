@@ -40,7 +40,7 @@ Puppet::Type.type(:fme_user).provide(:rest_client, :parent => Puppet::Provider::
   end
 
   def create
-    if (resource[:password].nil?)
+    if resource[:password].nil?
       raise Puppet::Error, "Sorry, password is mandatory when creating fme_users"
     end
     baseurl = Fme::Helper.get_url

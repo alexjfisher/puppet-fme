@@ -253,7 +253,7 @@ describe provider_class do
 
       describe '.item_services_url' do
         it 'should return correct URL' do
-          expect(provider.item_services_url).to eq ('www.example.com/repositories/repo/items/item.fmw/services')
+          expect(provider.item_services_url).to eq 'www.example.com/repositories/repo/items/item.fmw/services'
         end
       end
 
