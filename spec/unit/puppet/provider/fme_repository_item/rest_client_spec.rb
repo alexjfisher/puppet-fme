@@ -226,10 +226,13 @@ describe provider_class do
           before :each do
             stub_request(:get, "http://www.example.com/repositories/repo/items/item.fmw/services").
               with(:headers => { 'Accept'=>'application/json' } ).
-              to_return(:status => 200,
-                        :body   => [
-                          {'displayName' => 'service name 1', 'name' => 'service1' },
-                          {'displayName' => 'service name 2', 'name' => 'service2' }].to_json)
+              to_return(
+                :status => 200,
+                :body   => [
+                  {'displayName' => 'service name 1', 'name' => 'service1' },
+                  {'displayName' => 'service name 2', 'name' => 'service2' }
+                ].to_json
+              )
           end
           it 'should return 2 services' do
             expect(provider.services.size).to eq(2)
@@ -314,11 +317,12 @@ describe provider_class do
           services_being_inserted = ['foo','service2']
           response = [
             { 'reason' => 'missing', 'name' => 'foo', 'status' => 409},
-            { "entity" =>
-              { "displayName" => "Test Service 2", "name" => "service2" },
-              "name" => "service2",
+            {
+              "entity" => { "displayName" => "Test Service 2", "name" => "service2" },
+              "name"   => "service2",
               "status" => 200
-            }].to_json
+            }
+          ].to_json
           expect{ provider.process_put_services_response_code_207(services_being_inserted,response) }.
             to raise_error(Puppet::Error,
                            /The following services couldn't be added to repo\/item\.fmw: \["foo"\]/)

@@ -75,9 +75,12 @@ Puppet::Type.type(:fme_user).provide(:rest_client, :parent => Puppet::Provider::
   # Helper methods
   def get_new_params
     URI.encode_www_form(
-      { :name     => resource[:name],
+      {
+        :name     => resource[:name],
         :password => resource[:password],
         :fullName => ( resource[:fullname] || @property_hash[:fullname] ),
-        :roles    => ( resource[:roles]    || @property_hash[:roles] ) }.delete_if{ |k,v| v.nil? } )
+        :roles    => ( resource[:roles]    || @property_hash[:roles] )
+      }.delete_if{ |k,v| v.nil? }
+    )
   end
 end
