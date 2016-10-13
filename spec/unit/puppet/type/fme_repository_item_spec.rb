@@ -118,18 +118,18 @@ describe Puppet::Type.type(:fme_repository_item) do
         end
       end
       describe '.checksum_of_source' do
-          include FakeFS::SpecHelpers
-          it 'returns the checksum of the source file' do
-            mock_source_file = '/path/to/item.fmw'
-            FileUtils.mkdir_p '/path/to'
-            File.open(mock_source_file, 'w') do |f|
-              f.write 'DATA'
-            end
-            # echo -n "DATA" | sha256sum -
-            # c97c29c7a71b392b437ee03fd17f09bb10b75e879466fc0eb757b2c4a78ac938
-            expect(@property.checksum_of_source.hexdigest).to eq 'c97c29c7a71b392b437ee03fd17f09bb10b75e879466fc0eb757b2c4a78ac938'
+        include FakeFS::SpecHelpers
+        it 'returns the checksum of the source file' do
+          mock_source_file = '/path/to/item.fmw'
+          FileUtils.mkdir_p '/path/to'
+          File.open(mock_source_file, 'w') do |f|
+            f.write 'DATA'
           end
+          # echo -n "DATA" | sha256sum -
+          # c97c29c7a71b392b437ee03fd17f09bb10b75e879466fc0eb757b2c4a78ac938
+          expect(@property.checksum_of_source.hexdigest).to eq 'c97c29c7a71b392b437ee03fd17f09bb10b75e879466fc0eb757b2c4a78ac938'
         end
+      end
     end
 
     describe 'name' do
