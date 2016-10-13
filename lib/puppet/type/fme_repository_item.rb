@@ -85,7 +85,7 @@ Puppet::Type.newtype(:fme_repository_item) do
     defaultto ''
     munge do |value|
       if value.empty? and resource[:repository] and resource[:item]
-       "#{resource[:repository]}/#{resource[:item]}"
+        "#{resource[:repository]}/#{resource[:item]}"
       else
         fail "Use resource name style <repository>/<item> OR specify both 'repository' and 'item'" unless value =~ /^(.*)\/(.*)$/
         value
