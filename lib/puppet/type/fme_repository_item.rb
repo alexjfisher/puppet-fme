@@ -46,14 +46,14 @@ Puppet::Type.newtype(:fme_repository_item) do
       [
         /^(.*)\/(.*)$/, # pattern to parse <repository>/<item>
         [
-          [:repository, lambda{ |x| x }],
-          [:item,       lambda{ |x| x }]
+          [:repository, lambda { |x| x }],
+          [:item,       lambda { |x| x }]
         ]
       ],
       [
         /(.*)/, # Catch all workaround to avoid 'No set of title patterns matched the title'
         [
-          [:dummy, lambda{ |x| '' }]
+          [:dummy, lambda { |x| '' }]
         ]
       ]
     ]

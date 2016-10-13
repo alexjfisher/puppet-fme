@@ -80,7 +80,7 @@ Puppet::Type.type(:fme_user).provide(:rest_client, :parent => Puppet::Provider::
         :password => resource[:password],
         :fullName => (resource[:fullname] || @property_hash[:fullname]),
         :roles    => (resource[:roles]    || @property_hash[:roles])
-      }.delete_if{ |k, v| v.nil? }
+      }.delete_if { |k, v| v.nil? }
     )
   end
 end

@@ -117,7 +117,7 @@ Puppet::Type.type(:fme_repository_item).provide(:rest_client, :parent => Puppet:
   def services
     response = RestClient.get(item_services_url, :accept => :json)
     services = JSON.parse(response)
-    services.map{ |x| x['name'] }
+    services.map { |x| x['name'] }
   end
 
   def services=(services)

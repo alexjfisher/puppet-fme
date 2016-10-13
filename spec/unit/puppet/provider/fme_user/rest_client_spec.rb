@@ -131,7 +131,7 @@ describe provider_class do
         stub_request(:put, 'http://www.example.com/security/accounts/testuser?detail=high&name=testuser').to_return(:status => 421, :body => '{"message": "An error message"}')
       end
       it 'should raise a Puppet::Error with the API error message' do
-        expect{ provider.modify_user }.to raise_error(Puppet::Error, /FME Rest API returned 421 when modifying testuser\. {"message"=>"An error message"}/)
+        expect { provider.modify_user }.to raise_error(Puppet::Error, /FME Rest API returned 421 when modifying testuser\. {"message"=>"An error message"}/)
       end
     end
   end
