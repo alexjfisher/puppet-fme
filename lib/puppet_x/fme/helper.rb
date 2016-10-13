@@ -42,7 +42,7 @@ module Fme
     end
 
     def self.response_to_property_hash(response)
-      JSON.parse(response).merge!( { :ensure => :present, :provider => :rest_client } ).inject({}){|memo, (k, v)| memo[k.downcase.to_sym] = v; memo}
+      JSON.parse(response).merge!({ :ensure => :present, :provider => :rest_client }).inject({}){|memo, (k, v)| memo[k.downcase.to_sym] = v; memo}
     end
   end
 end

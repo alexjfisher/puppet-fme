@@ -30,12 +30,12 @@ describe provider_class do
         end
 
         it 'should return the resource "repo1"' do
-          expect(described_class.instances[0].instance_variable_get('@property_hash')).to eq( {
+          expect(described_class.instances[0].instance_variable_get('@property_hash')).to eq({
             :ensure      => :present,
             :provider    => :rest_client,
             :name        => 'repo1',
             :description => 'Test repo 1'
-          } )
+          })
         end
       end
 
@@ -53,21 +53,21 @@ describe provider_class do
         end
 
         it 'should return the resource "repo1"' do
-          expect(described_class.instances[0].instance_variable_get('@property_hash')).to eq( {
+          expect(described_class.instances[0].instance_variable_get('@property_hash')).to eq({
             :ensure      => :present,
             :provider    => :rest_client,
             :name        => 'repo1',
             :description => 'Test repo 1'
-          } )
+          })
         end
 
         it 'should return the resource "repo2"' do
-          expect(described_class.instances[1].instance_variable_get('@property_hash')).to eq( {
+          expect(described_class.instances[1].instance_variable_get('@property_hash')).to eq({
             :ensure      => :present,
             :provider    => :rest_client,
             :name        => 'repo2',
             :description => 'Test repo 2'
-          } )
+          })
         end
       end
     end
@@ -118,12 +118,12 @@ describe provider_class do
         it 'should create a repository' do
           resource[:description] = 'a test repo'
           provider.create
-          expect(provider.instance_variable_get('@property_hash')).to eq( {
+          expect(provider.instance_variable_get('@property_hash')).to eq({
             :ensure      => :present,
             :provider    => :rest_client,
             :name        => 'myrepo',
             :description => 'a test repo'
-          } )
+          })
         end
       end
 
@@ -145,7 +145,7 @@ describe provider_class do
       end
       it 'should be deleted' do
         provider.destroy
-        expect(provider.instance_variable_get('@property_hash')).to eq( { :ensure => :absent } )
+        expect(provider.instance_variable_get('@property_hash')).to eq({ :ensure => :absent })
       end
     end
 

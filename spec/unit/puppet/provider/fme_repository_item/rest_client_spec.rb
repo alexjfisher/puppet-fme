@@ -58,7 +58,7 @@ describe provider_class do
         end
 
         it 'should return the resource repo1/item1.fmw' do
-          expect(described_class.instances[0].instance_variable_get('@property_hash')).to eq( {
+          expect(described_class.instances[0].instance_variable_get('@property_hash')).to eq({
             :ensure         => :present,
             :provider       => :rest_client,
             :name           => 'repo1/item1.fmw',
@@ -68,11 +68,11 @@ describe provider_class do
             :type           => 'WORKSPACE',
             :last_save_date => '2014-12-11T11:36:12',
             :item_title     => 'title1'
-          } )
+          })
         end
 
         it 'should return the resource repo1/item2.fmw' do
-          expect(described_class.instances[1].instance_variable_get('@property_hash')).to eq( {
+          expect(described_class.instances[1].instance_variable_get('@property_hash')).to eq({
             :ensure         => :present,
             :provider       => :rest_client,
             :name           => 'repo1/item2.fmw',
@@ -82,11 +82,11 @@ describe provider_class do
             :type           => 'WORKSPACE',
             :last_save_date => '2014-12-11T11:36:13',
             :item_title     => 'title2'
-          } )
+          })
         end
 
         it 'should return the resource repo2/item3.fmw' do
-          expect(described_class.instances[2].instance_variable_get('@property_hash')).to eq( {
+          expect(described_class.instances[2].instance_variable_get('@property_hash')).to eq({
             :ensure         => :present,
             :provider       => :rest_client,
             :name           => 'repo2/item3.fmw',
@@ -96,11 +96,11 @@ describe provider_class do
             :type           => 'WORKSPACE',
             :last_save_date => '2014-12-11T11:36:14',
             :item_title     => 'title3'
-          } )
+          })
         end
 
         it 'should return the resource repo2/item4.fmw' do
-          expect(described_class.instances[3].instance_variable_get('@property_hash')).to eq( {
+          expect(described_class.instances[3].instance_variable_get('@property_hash')).to eq({
             :ensure         => :present,
             :provider       => :rest_client,
             :name           => 'repo2/item4.fmw',
@@ -110,7 +110,7 @@ describe provider_class do
             :type           => 'WORKSPACE',
             :last_save_date => '2014-12-11T11:36:15',
             :item_title     => 'title4'
-          } )
+          })
         end
       end
     end
@@ -166,7 +166,7 @@ describe provider_class do
         end
         it 'should create a repository_item' do
           provider.create
-          expect(provider.instance_variable_get('@property_hash')).to eq( {
+          expect(provider.instance_variable_get('@property_hash')).to eq({
             :ensure         => :present,
             :provider       => :rest_client,
             :name           => 'repo/test.fmw',
@@ -176,7 +176,7 @@ describe provider_class do
             :type           => 'WORKSPACE',
             :last_save_date => '2014-12-11T11:32:50',
             :description    => 'a description'
-          } )
+          })
         end
       end
       context 'when API returns an error' do
@@ -214,7 +214,7 @@ describe provider_class do
         context 'when item has no services' do
           before :each do
             stub_request(:get, 'http://www.example.com/repositories/repo/items/item.fmw/services').
-              with(:headers => { 'Accept'=>'application/json' } ).
+              with(:headers => { 'Accept'=>'application/json' }).
               to_return(:status => 200, :body => [].to_json)
           end
           it 'should return names of the services' do
@@ -225,7 +225,7 @@ describe provider_class do
         context 'when item has 2 services' do
           before :each do
             stub_request(:get, 'http://www.example.com/repositories/repo/items/item.fmw/services').
-              with(:headers => { 'Accept'=>'application/json' } ).
+              with(:headers => { 'Accept'=>'application/json' }).
               to_return(
                 :status => 200,
                 :body   => [

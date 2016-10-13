@@ -131,7 +131,7 @@ Puppet::Type.type(:fme_repository_item).provide(:rest_client, :parent => Puppet:
   end
 
   def services_body(services)
-    URI.encode_www_form( :services => services )
+    URI.encode_www_form(:services => services)
   end
 
   def process_put_services_response(services, response)

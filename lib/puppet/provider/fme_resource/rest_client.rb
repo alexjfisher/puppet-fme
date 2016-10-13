@@ -62,14 +62,14 @@ Puppet::Type.type(:fme_resource).provide(:rest_client) do
   end
 
   def create_directory
-    RestClient.post(get_post_url, create_directory_post_request_body ) do |response, request, result, &block|
+    RestClient.post(get_post_url, create_directory_post_request_body) do |response, request, result, &block|
       fail "FME Rest API returned #{response.code} when creating directory #{resource[:name]}. #{JSON.parse(response)}" unless response.code == 201
     end
   end
 
   def create_directory_post_request_body
     directory_name = Pathname(resource[:path]).basename.to_s
-    request_body = URI.encode_www_form( :directoryname => directory_name, :type => 'DIR' )
+    request_body = URI.encode_www_form(:directoryname => directory_name, :type => 'DIR')
     request_body
   end
 

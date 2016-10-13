@@ -39,13 +39,13 @@ describe provider_class do
         expect(described_class.instances.size).to eq(1)
       end
       it 'should return the resource "test"' do
-        expect(described_class.instances[0].instance_variable_get('@property_hash')).to eq( {
+        expect(described_class.instances[0].instance_variable_get('@property_hash')).to eq({
           :ensure   => :present,
           :name     => 'test',
           :fullname => 'test user',
           :roles    => ['fmeuser'],
           :provider => :rest_client
-        } )
+        })
       end
     end
     describe 'with 2 users' do
@@ -64,22 +64,22 @@ describe provider_class do
         expect(described_class.instances.size).to eq(2)
       end
       it 'should return the resource "test"' do
-        expect(described_class.instances[0].instance_variable_get('@property_hash')).to eq( {
+        expect(described_class.instances[0].instance_variable_get('@property_hash')).to eq({
           :ensure   => :present,
           :name     => 'test',
           :fullname => 'test user',
           :roles    => ['fmeuser'],
           :provider => :rest_client
-        } )
+        })
       end
       it 'should return the resource "test2"' do
-        expect(described_class.instances[1].instance_variable_get('@property_hash')).to eq( {
+        expect(described_class.instances[1].instance_variable_get('@property_hash')).to eq({
           :ensure   => :present,
           :name     => 'test2',
           :fullname => 'test user2',
           :roles    => ['fmeuser', 'fmeadmin'],
           :provider => :rest_client
-        } )
+        })
       end
     end
   end
@@ -104,7 +104,7 @@ describe provider_class do
     context 'when fullname exists in @property_hash' do
       expected='name=testuser&fullName=Test+User+2'
       it "should return #{expected}" do
-        provider.instance_variable_set(:@property_hash, { :fullname => 'Test User 2' } )
+        provider.instance_variable_set(:@property_hash, { :fullname => 'Test User 2' })
         expect(provider.get_new_params).to eq(expected)
       end
     end
@@ -117,13 +117,13 @@ describe provider_class do
       end
       it 'should call response_to_property_hash to populate @property_hash' do
         provider.modify_user
-        expect(provider.instance_variable_get('@property_hash')).to eq( {
+        expect(provider.instance_variable_get('@property_hash')).to eq({
           :ensure   => :present,
           :name     => 'testuser',
           :fullname => 'test user',
           :roles    => ['fmeuser'],
           :provider => :rest_client
-        } )
+        })
       end
     end
     context 'when API returns response code 421' do
@@ -170,14 +170,14 @@ describe provider_class do
       end
       it 'should set its @property_flush :ensure value to :absent' do
         provider.destroy
-        expect(provider.instance_variable_get('@property_flush')).to eq( { :ensure => :absent } )
+        expect(provider.instance_variable_get('@property_flush')).to eq({ :ensure => :absent })
       end
     end
     describe 'is being flushed' do
       context 'when being deleted' do
         before :each do
           stub_request(:delete, 'http://www.example.com/security/accounts/testuser')
-          provider.instance_variable_set(:@property_flush, { :ensure => :absent } )
+          provider.instance_variable_set(:@property_flush, { :ensure => :absent })
         end
         it 'should delete' do
           provider.flush

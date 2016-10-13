@@ -27,11 +27,11 @@ describe Puppet::Type.type(:fme_repository) do
     describe 'ensure' do
       [ :present, :absent ].each do |value|
         it "should support #{value} as a value to ensure" do
-          expect { described_class.new( { :name => 'example_user', :ensure => value })}.to_not raise_error
+          expect { described_class.new({ :name => 'example_user', :ensure => value })}.to_not raise_error
         end
       end
       it 'should not support other values' do
-        expect { described_class.new( { :name => 'example_user', :ensure => 'foo' })}.to raise_error(Puppet::Error, /Invalid value/)
+        expect { described_class.new({ :name => 'example_user', :ensure => 'foo' })}.to raise_error(Puppet::Error, /Invalid value/)
       end
     end
   end
