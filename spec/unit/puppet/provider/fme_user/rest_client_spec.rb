@@ -72,7 +72,7 @@ describe provider_class do
         expect(described_class.instances[1].instance_variable_get('@property_hash')).to eq(:ensure   => :present,
                                                                                            :name     => 'test2',
                                                                                            :fullname => 'test user2',
-                                                                                           :roles    => ['fmeuser', 'fmeadmin'],
+                                                                                           :roles    => %w(fmeuser fmeadmin),
                                                                                            :provider => :rest_client)
       end
     end

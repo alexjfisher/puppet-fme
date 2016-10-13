@@ -35,7 +35,7 @@ describe Puppet::Type.type(:fme_user) do
         expect { described_class.new(:name => 'example_user', :roles => 'foo') }.to_not raise_error
       end
       it 'should support multiple roles as array of strings' do
-        expect { described_class.new(:name => 'example_user', :roles => ['foo', 'bar']) }.to_not raise_error
+        expect { described_class.new(:name => 'example_user', :roles => %w(foo bar)) }.to_not raise_error
       end
       it 'should not support a comma separated list' do
         expect { described_class.new(:name => 'example_user', :roles => 'foo,bar') }.to raise_error(Puppet::Error, /Roles cannot include ','/)
@@ -45,9 +45,9 @@ describe Puppet::Type.type(:fme_user) do
       end
       describe 'when testing is in sync' do
         it 'should not care about order' do
-          @property = described_class.new(:name => 'example_user', :roles => ['foo', 'bar', 'foobar']).property(:roles)
-          expect(@property).to be_safe_insync(['foo', 'bar', 'foobar'])
-          expect(@property).to be_safe_insync(['foobar', 'bar', 'foo'])
+          @property = described_class.new(:name => 'example_user', :roles => %w(foo bar foobar)).property(:roles)
+          expect(@property).to be_safe_insync(%w(foo bar foobar))
+          expect(@property).to be_safe_insync(%w(foobar bar foo))
         end
       end
     end

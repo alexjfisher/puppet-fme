@@ -160,7 +160,7 @@ describe Puppet::Type.type(:fme_repository_item) do
         expect { described_class.new(:title => 'repo/item.fmw', :ensure => 'present', :source => '/path/to/item.fmw', :services => 'service1') }.to_not raise_error
       end
       it 'should support multiple services as array of strings' do
-        expect { described_class.new(:title => 'repo/item.fmw', :ensure => 'present', :source => '/path/to/item.fmw', :services => ['service1', 'service2']) }.to_not raise_error
+        expect { described_class.new(:title => 'repo/item.fmw', :ensure => 'present', :source => '/path/to/item.fmw', :services => %w(service1 service2)) }.to_not raise_error
       end
       it 'should not support a comma separated list' do
         expect { described_class.new(:title => 'repo/item.fmw', :ensure => 'present', :source => '/path/to/item.fmw', :services => 'service1,service2') }.
@@ -172,11 +172,11 @@ describe Puppet::Type.type(:fme_repository_item) do
       end
       describe 'when testing is in sync' do
         it 'should not care about order' do
-          @property = described_class.new(:title => 'repo/item.fmw', :ensure => 'present', :source => '/path/to/item.fmw', :services => ['s1', 's2', 's3']).property(:services)
-          expect(@property).to be_safe_insync(['s1', 's2', 's3'])
-          expect(@property).to be_safe_insync(['s2', 's1', 's3'])
-          expect(@property).to be_safe_insync(['s3', 's1', 's2'])
-          expect(@property).to be_safe_insync(['s3', 's2', 's1'])
+          @property = described_class.new(:title => 'repo/item.fmw', :ensure => 'present', :source => '/path/to/item.fmw', :services => %w(s1 s2 s3)).property(:services)
+          expect(@property).to be_safe_insync(%w(s1 s2 s3))
+          expect(@property).to be_safe_insync(%w(s2 s1 s3))
+          expect(@property).to be_safe_insync(%w(s3 s1 s2))
+          expect(@property).to be_safe_insync(%w(s3 s2 s1))
         end
       end
     end
