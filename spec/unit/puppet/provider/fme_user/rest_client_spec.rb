@@ -123,7 +123,7 @@ describe provider_class do
         stub_request(:put, 'http://www.example.com/security/accounts/testuser?detail=high&name=testuser').to_return(:status => 421, :body => '{"message": "An error message"}')
       end
       it 'should raise a Puppet::Error with the API error message' do
-        expect { provider.modify_user }.to raise_error(Puppet::Error, /FME Rest API returned 421 when modifying testuser\. {"message"=>"An error message"}/)
+        expect { provider.modify_user }.to raise_error(Puppet::Error, %r{FME Rest API returned 421 when modifying testuser\. {"message"=>"An error message"}})
       end
     end
   end
@@ -152,7 +152,7 @@ describe provider_class do
       end
       context 'when password is not set' do
         it 'should raise exception' do
-          expect { provider.create }.to raise_error(Puppet::Error, /password is mandatory/)
+          expect { provider.create }.to raise_error(Puppet::Error, %r{password is mandatory})
         end
       end
     end
@@ -178,7 +178,7 @@ describe provider_class do
       context 'when not being deleted' do
         context 'when password is not set' do
           it 'should raise exception' do
-            expect { provider.flush }.to raise_error(Puppet::Error, /password is mandatory/)
+            expect { provider.flush }.to raise_error(Puppet::Error, %r{password is mandatory})
           end
         end
         context 'when password is set' do

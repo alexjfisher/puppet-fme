@@ -177,7 +177,7 @@ describe provider_class do
             to_return(:status => 409, :body => { 'what' => 'test.fmw', 'reason' => 'exists', 'message' => "File 'test.fmw' already exists" }.to_json)
         end
         it 'should raise an exception' do
-          expect { provider.create }.to raise_error(Puppet::Error, /FME Rest API returned 409 when creating repo\/item\.fmw/)
+          expect { provider.create }.to raise_error(Puppet::Error, %r{FME Rest API returned 409 when creating repo/item\.fmw})
         end
       end
     end
@@ -290,7 +290,7 @@ describe provider_class do
             response.stubs(:to_str).returns('{"message":"dummy"}')
             expect { provider.process_put_services_response(dummy_services, response) }.
               to raise_error(Puppet::Error,
-                             /FME Rest API returned 404 when adding services to repo\/item\.fmw\. {"message"=>"dummy"}/)
+                             %r[FME Rest API returned 404 when adding services to repo/item\.fmw\. {"message"=>"dummy"}])
           end
         end
       end
@@ -315,7 +315,7 @@ describe provider_class do
           ].to_json
           expect { provider.process_put_services_response_code_207(services_being_inserted, response) }.
             to raise_error(Puppet::Error,
-                           /The following services couldn't be added to repo\/item\.fmw: \["foo"\]/)
+                           %r{The following services couldn't be added to repo/item\.fmw: \["foo"\]})
           expect(provider.instance_variable_get('@property_hash')[:services]).to eq(['service2'])
         end
       end

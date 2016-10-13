@@ -11,13 +11,13 @@ describe Fme::Helper do
         context 'when not set' do
           it 'should default to 80' do
             Fme::Helper.expects(:read_settings).returns('username' => 'user', 'password' => 'password')
-            expect(Fme::Helper.get_url).to match(/:80/)
+            expect(Fme::Helper.get_url).to match(%r{:80})
           end
         end
         context 'when port is set to 443' do
           it 'should return URL with port 443' do
             Fme::Helper.expects(:read_settings).returns('username' => 'user', 'password' => 'password', 'port' => 443)
-            expect(Fme::Helper.get_url).to match(/:443/)
+            expect(Fme::Helper.get_url).to match(%r{:443})
           end
         end
       end
@@ -25,13 +25,13 @@ describe Fme::Helper do
         context 'when not set' do
           it 'should return http URL' do
             Fme::Helper.expects(:read_settings).returns('username' => 'user', 'password' => 'password')
-            expect(Fme::Helper.get_url).to match(/http:\/\//)
+            expect(Fme::Helper.get_url).to match(%r{http://})
           end
         end
         context 'when set to https' do
           it 'should return https URL' do
             Fme::Helper.expects(:read_settings).returns('username' => 'user', 'password' => 'password', 'protocol' => 'https')
-            expect(Fme::Helper.get_url).to match(/https:\/\//)
+            expect(Fme::Helper.get_url).to match(%r{https://})
           end
         end
       end
@@ -39,13 +39,13 @@ describe Fme::Helper do
         context 'when not set' do
           it 'should return localhost URL' do
             Fme::Helper.expects(:read_settings).returns('username' => 'user', 'password' => 'password')
-            expect(Fme::Helper.get_url).to match(/@localhost:/)
+            expect(Fme::Helper.get_url).to match(%r{@localhost:})
           end
         end
         context 'when set to example.com' do
           it 'should return URL for example.com' do
             Fme::Helper.expects(:read_settings).returns('username' => 'user', 'password' => 'password', 'host' => 'example.com')
-            expect(Fme::Helper.get_url).to match(/@example.com:/)
+            expect(Fme::Helper.get_url).to match(%r{@example.com:})
           end
         end
       end
@@ -76,17 +76,17 @@ describe Fme::Helper do
   describe '.validate_settings' do
     context 'with no settings' do
       it 'should raise an exception' do
-        expect { Fme::Helper.validate_settings(nil) }.to raise_error(Puppet::Error, /Can't find settings/)
+        expect { Fme::Helper.validate_settings(nil) }.to raise_error(Puppet::Error, %r{Can't find settings})
       end
     end
     context 'with missing username' do
       it 'should raise an exception' do
-        expect { Fme::Helper.validate_settings('{}') }.to raise_error(Puppet::Error, /Can't find username/)
+        expect { Fme::Helper.validate_settings('{}') }.to raise_error(Puppet::Error, %r{Can't find username})
       end
     end
     context 'with missing password' do
       it 'should raise an exception' do
-        expect { Fme::Helper.validate_settings("{:username => 'user'}") }.to raise_error(Puppet::Error, /Can't find password/)
+        expect { Fme::Helper.validate_settings("{:username => 'user'}") }.to raise_error(Puppet::Error, %r{Can't find password})
       end
     end
   end
@@ -107,7 +107,7 @@ describe Fme::Helper do
       end
       it 'should raise exception' do
         Fme::Helper.expects(:settings_file).returns('/path/to/settings')
-        expect { Fme::Helper.read_settings }.to raise_error(Puppet::Error, /Error when reading FME API settings file/)
+        expect { Fme::Helper.read_settings }.to raise_error(Puppet::Error, %r{Error when reading FME API settings file})
       end
     end
   end

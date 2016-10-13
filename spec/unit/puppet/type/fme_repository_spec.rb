@@ -31,7 +31,7 @@ describe Puppet::Type.type(:fme_repository) do
         end
       end
       it 'should not support other values' do
-        expect { described_class.new(:name => 'example_user', :ensure => 'foo') }.to raise_error(Puppet::Error, /Invalid value/)
+        expect { described_class.new(:name => 'example_user', :ensure => 'foo') }.to raise_error(Puppet::Error, %r{Invalid value})
       end
     end
   end

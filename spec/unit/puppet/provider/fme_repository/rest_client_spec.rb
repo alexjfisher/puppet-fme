@@ -125,7 +125,7 @@ describe provider_class do
             to_return(:status => 401, :body => { 'message' => 'Authentication failed: Failed to login' }.to_json)
         end
         it 'should raise an exception' do
-          expect { provider.create }.to raise_error(Puppet::Error, /FME Rest API returned 401 when creating myrepo/)
+          expect { provider.create }.to raise_error(Puppet::Error, %r{FME Rest API returned 401 when creating myrepo})
         end
       end
     end
@@ -144,7 +144,7 @@ describe provider_class do
     describe 'is having description updated' do
       it 'should raise exception' do
         expect { provider.description = 'new description' }.
-          to raise_error(Puppet::Error, /FME API doesn\'t support updating the repository description/)
+          to raise_error(Puppet::Error, %r{FME API doesn\'t support updating the repository description})
       end
     end
   end

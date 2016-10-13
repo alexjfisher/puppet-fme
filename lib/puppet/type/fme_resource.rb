@@ -6,13 +6,13 @@ Puppet::Type.newtype(:fme_resource) do
     identity = lambda { |x| x }
     [
       [
-        /^([^:]+)$/,
+        %r{^([^:]+)$},
         [
           [:name, identity]
         ]
       ],
       [
-        /^((.*):(.*))$/,
+        %r{^((.*):(.*))$},
         [
           [:name,     identity],
           [:resource, identity],

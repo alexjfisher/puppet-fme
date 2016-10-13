@@ -48,7 +48,7 @@ describe Puppet::Type.type(:fme_repository_item) do
         end
       end
       it 'should not support other values' do
-        expect { described_class.new(:title => 'repo/item.fmw', :ensure => 'foo') }.to raise_error(Puppet::Error, /Invalid value/)
+        expect { described_class.new(:title => 'repo/item.fmw', :ensure => 'foo') }.to raise_error(Puppet::Error, %r{Invalid value})
       end
       describe '#sync' do
         context 'should = :present' do
@@ -148,7 +148,7 @@ describe Puppet::Type.type(:fme_repository_item) do
         end
         context 'with mismatched repository or item' do
           it 'should raise error' do
-            expect { @item = described_class.new(:title => 'resourcetitle', :name => 'repo2/item42.fmw', :repository => 'repo', :item => 'item.fmw', :source => '/path/to/item.fmw', :ensure => :present) }.to raise_error(Puppet::Error, /'name' should not be used/)
+            expect { @item = described_class.new(:title => 'resourcetitle', :name => 'repo2/item42.fmw', :repository => 'repo', :item => 'item.fmw', :source => '/path/to/item.fmw', :ensure => :present) }.to raise_error(Puppet::Error, %r{'name' should not be used})
           end
         end
       end
@@ -164,11 +164,11 @@ describe Puppet::Type.type(:fme_repository_item) do
       end
       it 'should not support a comma separated list' do
         expect { described_class.new(:title => 'repo/item.fmw', :ensure => 'present', :source => '/path/to/item.fmw', :services => 'service1,service2') }.
-          to raise_error(Puppet::Error, /Services cannot include ','/)
+          to raise_error(Puppet::Error, %r{Services cannot include ','})
       end
       it 'should not support a space separated list' do
         expect { described_class.new(:title => 'repo/item.fmw', :ensure => 'present', :source => '/path/to/item.fmw', :services => 'service1 service2') }.
-          to raise_error(Puppet::Error, /Services cannot include ' '/)
+          to raise_error(Puppet::Error, %r{Services cannot include ' '})
       end
       describe 'when testing is in sync' do
         it 'should not care about order' do
@@ -188,7 +188,7 @@ describe Puppet::Type.type(:fme_repository_item) do
       [:description, :item_title, :type, :last_save_date].each do |param|
         describe param do
           it 'should raise error' do
-            expect { @item[param] = 'foo' }.to raise_error(Puppet::Error, /#{param} is read-only/)
+            expect { @item[param] = 'foo' }.to raise_error(Puppet::Error, %r{#{param} is read-only})
           end
         end
       end

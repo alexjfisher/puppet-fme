@@ -36,7 +36,7 @@ describe 'fme_resource' do
           apply_manifest(pp, :catch_changes => true)
         end
         describe command("curl -H 'Accept: application/octet-stream' --user admin:admin http://#{ENV['FMESERVER']}/fmerest/v2/resources/connections/FME_SHAREDRESOURCE_DATA/filesys/puppet_test_data/testfile") do
-          its(:stdout) { should match /Test file data/ }
+          its(:stdout) { should match %r{Test file data} }
         end
       end
       context 'with \'resource\' and \'path\' set' do

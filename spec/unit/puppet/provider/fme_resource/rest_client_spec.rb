@@ -49,7 +49,7 @@ describe provider_class do
       it 'should raise exception' do
         expect { provider.get_file_metadata('FME_SHAREDRESOURCE_DATA', '/path/to/resource') }.
           to raise_error(Puppet::Error,
-                         /FME Rest API returned 403 when getting metadata for FME_SHAREDRESOURCE_DATA:\/path\/to\/resource\. {"response"=>"hash"}/)
+                         %r[FME Rest API returned 403 when getting metadata for FME_SHAREDRESOURCE_DATA:/path/to/resource\. {"response"=>"hash"}])
       end
     end
   end
@@ -73,7 +73,7 @@ describe provider_class do
         stub_request(:get, 'http://www.example.com/resources/connections/FME_SHAREDRESOURCE_DATA/filesys/path/to/resource').
           to_return(:status => 404)
         expect { provider.checksum }.
-          to raise_error(Puppet::Error, /Error calculating checksum 404/)
+          to raise_error(Puppet::Error, %r{Error calculating checksum 404})
       end
     end
   end
@@ -148,7 +148,7 @@ describe provider_class do
           stub_request(:post, 'http://url/').
             with(:body => 'DATA', :headers => { 'Post' => 'params' }).
             to_return(:status => 409, :body => '{"what": "/for/bar/upload", "reason": "exists", "message": "File \'upload\' already exists"}')
-          expect { provider.upload_file }.to raise_error(Puppet::Error, /FME Rest API returned 409 when uploading FME_SHAREDRESOURCE_DATA:\/path\/to\/resource\. {"what"=>"\/for\/bar\/upload", "reason"=>"exists", "message"=>"File 'upload' already exists"/)
+          expect { provider.upload_file }.to raise_error(Puppet::Error, %r[FME Rest API returned 409 when uploading FME_SHAREDRESOURCE_DATA:/path/to/resource\. {"what"=>"/for/bar/upload", "reason"=>"exists", "message"=>"File 'upload' already exists"])
         end
       end
     end
@@ -170,7 +170,7 @@ describe provider_class do
         stub_request(:post, 'http://url/').
           with(:body => 'directoryname=resource&type=DIR').
           to_return(:status => 409, :body => '{"what": "/for/bar/testdir", "reason": "exists", "message": "Directory \'testdir\' already exists"}')
-        expect { provider.create_directory }.to raise_error(Puppet::Error, /FME Rest API returned 409 when creating directory FME_SHAREDRESOURCE_DATA:\/path\/to\/resource\. {"what"=>"\/for\/bar\/testdir", "reason"=>"exists", "message"=>"Directory 'testdir' already exists"/)
+        expect { provider.create_directory }.to raise_error(Puppet::Error, %r[FME Rest API returned 409 when creating directory FME_SHAREDRESOURCE_DATA:/path/to/resource\. {"what"=>"/for/bar/testdir", "reason"=>"exists", "message"=>"Directory 'testdir' already exists"])
       end
     end
   end
@@ -213,7 +213,7 @@ describe provider_class do
     context 'when has_source? is false' do
       it 'should raise an exception' do
         provider.expects(:has_source?).returns(false)
-        expect { provider.validate_source }.to raise_error(Puppet::Error, /source is required when creating new resource file/)
+        expect { provider.validate_source }.to raise_error(Puppet::Error, %r{source is required when creating new resource file})
       end
     end
   end

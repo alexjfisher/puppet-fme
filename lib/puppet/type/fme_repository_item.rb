@@ -44,14 +44,14 @@ Puppet::Type.newtype(:fme_repository_item) do
   def self.title_patterns
     [
       [
-        /^(.*)\/(.*)$/, # pattern to parse <repository>/<item>
+        %r{^(.*)/(.*)$}, # pattern to parse <repository>/<item>
         [
           [:repository, lambda { |x| x }],
           [:item,       lambda { |x| x }]
         ]
       ],
       [
-        /(.*)/, # Catch all workaround to avoid 'No set of title patterns matched the title'
+        %r{(.*)}, # Catch all workaround to avoid 'No set of title patterns matched the title'
         [
           [:dummy, lambda { |x| '' }]
         ]
@@ -61,7 +61,7 @@ Puppet::Type.newtype(:fme_repository_item) do
 
   validate do
     fail "'name' should not be used" unless @original_parameters[:name].nil? or @original_parameters[:name] == "#{@original_parameters[:repository]}/#{@original_parameters[:item]}"
-    if match = @title.match(/^(.*)\/(.*)$/) # rubocop:disable Lint/AssignmentInCondition
+    if match = @title.match(%r{^(.*)/(.*)$}) # rubocop:disable Lint/AssignmentInCondition
       fail "'repository' parameter #{self[:repository]} must match resource title #{@title} or be omitted" unless match.captures[0] == self[:repository]
       fail "'item' parameter #{self[:item]} must match resource title #{@title} or be omitted" unless match.captures[1] == self[:item]
     end
@@ -77,7 +77,7 @@ Puppet::Type.newtype(:fme_repository_item) do
 
   newparam(:item, :namevar => true) do
     desc 'The name of the item'
-    newvalues(/[^\/]+\.(?:|fmw|fds|fmx|fmwt)/)
+    newvalues(%r{[^/]+\.(?:|fmw|fds|fmx|fmwt)})
   end
 
   newparam(:name, :namevar => true) do
@@ -87,7 +87,7 @@ Puppet::Type.newtype(:fme_repository_item) do
       if value.empty? and resource[:repository] and resource[:item]
         "#{resource[:repository]}/#{resource[:item]}"
       else
-        fail "Use resource name style <repository>/<item> OR specify both 'repository' and 'item'" unless value =~ /^(.*)\/(.*)$/
+        fail "Use resource name style <repository>/<item> OR specify both 'repository' and 'item'" unless value =~ %r{^(.*)/(.*)$}
         value
       end
     end

@@ -26,7 +26,7 @@ describe Puppet::Type.type(:fme_user) do
         end
       end
       it 'should not support other values' do
-        expect { described_class.new(:name => 'example_user', :ensure => 'foo') }.to raise_error(Puppet::Error, /Invalid value/)
+        expect { described_class.new(:name => 'example_user', :ensure => 'foo') }.to raise_error(Puppet::Error, %r{Invalid value})
       end
     end
     describe 'roles' do
@@ -38,10 +38,10 @@ describe Puppet::Type.type(:fme_user) do
         expect { described_class.new(:name => 'example_user', :roles => %w(foo bar)) }.to_not raise_error
       end
       it 'should not support a comma separated list' do
-        expect { described_class.new(:name => 'example_user', :roles => 'foo,bar') }.to raise_error(Puppet::Error, /Roles cannot include ','/)
+        expect { described_class.new(:name => 'example_user', :roles => 'foo,bar') }.to raise_error(Puppet::Error, %r{Roles cannot include ','})
       end
       it 'should not support a space separated list' do
-        expect { described_class.new(:name => 'example_user', :roles => 'foo bar') }.to raise_error(Puppet::Error, /Roles cannot include ' '/)
+        expect { described_class.new(:name => 'example_user', :roles => 'foo bar') }.to raise_error(Puppet::Error, %r{Roles cannot include ' '})
       end
       describe 'when testing is in sync' do
         it 'should not care about order' do

@@ -48,7 +48,7 @@ describe Puppet::Type.type(:fme_resource) do
         end
       end
       it 'should not support other values' do
-        expect { described_class.new(:title => 'RESOURCE:/path', :ensure => 'foo') }.to raise_error(Puppet::Error, /Invalid value/)
+        expect { described_class.new(:title => 'RESOURCE:/path', :ensure => 'foo') }.to raise_error(Puppet::Error, %r{Invalid value})
       end
       describe ':present is an alias for :file' do
         it 'resource ensure set to :present should equal :file' do
@@ -79,7 +79,7 @@ describe Puppet::Type.type(:fme_resource) do
           describe 'when currently directory' do
             it 'should raise error' do
               @provider.expects(:properties).returns(:ensure => :directory)
-              expect { @property.sync }.to raise_error(Puppet::Error, /Cannot replace a directory with a file!/)
+              expect { @property.sync }.to raise_error(Puppet::Error, %r{Cannot replace a directory with a file!})
             end
           end
         end
@@ -90,7 +90,7 @@ describe Puppet::Type.type(:fme_resource) do
           describe 'when currently file' do
             it 'should raise error if trying to replace with file' do
               @provider.expects(:properties).returns(:ensure => :file)
-              expect { @property.sync }.to raise_error(Puppet::Error, /Cannot replace a file with a directory!/)
+              expect { @property.sync }.to raise_error(Puppet::Error, %r{Cannot replace a file with a directory!})
             end
           end
           describe 'otherwise' do
@@ -188,7 +188,7 @@ describe Puppet::Type.type(:fme_resource) do
         end
         it 'returns "replaced file of size..." when replacing a file' do
           @property.expects(:size_of_source).returns 42
-          expect(@property.change_to_s(:file, :file)).to match /replaced file of size  bytes with one of 42 bytes/
+          expect(@property.change_to_s(:file, :file)).to match %r{replaced file of size  bytes with one of 42 bytes}
         end
       end
       describe '.size_of_source' do
@@ -220,7 +220,7 @@ describe Puppet::Type.type(:fme_resource) do
 
     describe 'source' do
       it 'should fail if not an absolute path' do
-        expect { described_class.new(:title => 'RESOURCE:/path', :source => 'not_absolute', :ensure => :file) }.to raise_error(Puppet::Error, /'source' file path must be absolute, not 'not_absolute'/)
+        expect { described_class.new(:title => 'RESOURCE:/path', :source => 'not_absolute', :ensure => :file) }.to raise_error(Puppet::Error, %r{'source' file path must be absolute, not 'not_absolute'})
       end
     end
   end
