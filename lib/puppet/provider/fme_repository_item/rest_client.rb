@@ -122,7 +122,7 @@ Puppet::Type.type(:fme_repository_item).provide(:rest_client, :parent => Puppet:
 
   def services=(services)
     RestClient.put(item_services_url, services_body(services), :accept => :json, :content_type => 'application/x-www-form-urlencoded') do |response, request, result, &block|
-      process_put_services_response(services,response)
+      process_put_services_response(services, response)
     end
   end
 
@@ -134,12 +134,12 @@ Puppet::Type.type(:fme_repository_item).provide(:rest_client, :parent => Puppet:
     URI.encode_www_form( :services => services )
   end
 
-  def process_put_services_response(services,response)
+  def process_put_services_response(services, response)
     case response.code
     when 200
       process_put_services_response_code_200(services)
     when 207
-      process_put_services_response_code_207(services,response)
+      process_put_services_response_code_207(services, response)
     else
       raise Puppet::Error, "FME Rest API returned #{response.code} when adding services to #{resource[:name]}. #{JSON.parse(response)}"
     end
@@ -149,7 +149,7 @@ Puppet::Type.type(:fme_repository_item).provide(:rest_client, :parent => Puppet:
     @property_hash[:services] = services
   end
 
-  def process_put_services_response_code_207(services,response)
+  def process_put_services_response_code_207(services, response)
     #"The response body contains information about the result of the registration operation, indicating success or error status for each service"
     @property_hash[:services] = JSON.parse(response).map { |service| service['name'] if service['status'] == 200}.compact
     raise Puppet::Error, "The following services couldn't be added to #{resource[:name]}: #{services-@property_hash[:services]}"

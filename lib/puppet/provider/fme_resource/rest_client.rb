@@ -18,7 +18,7 @@ Puppet::Type.type(:fme_resource).provide(:rest_client) do
     @baseurl = Fme::Helper.get_url
   end
 
-  def get_file_metadata(resource,path)
+  def get_file_metadata(resource, path)
     url = "#{@baseurl}/resources/connections/#{resource}/filesys/#{path}"
     RestClient.get(url, { :params => { 'detail' => 'low', :depth => 0 }, :accept => :json }) do |response, request, result, &block|
       case response.code

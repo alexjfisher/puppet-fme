@@ -175,20 +175,20 @@ describe Puppet::Type.type(:fme_resource) do
       end
       describe '.change_to_s' do
         it 'returns "uploaded new file" when creating a new file' do
-          expect(@property.change_to_s(:absent,:file)).to eq 'uploaded new file'
+          expect(@property.change_to_s(:absent, :file)).to eq 'uploaded new file'
         end
         it 'returns "created directory" when creating a new directory' do
-          expect(@property.change_to_s(:absent,:directory)).to eq 'created directory'
+          expect(@property.change_to_s(:absent, :directory)).to eq 'created directory'
         end
         it 'returns "deleted file" when deleting a file' do
-          expect(@property.change_to_s(:file,:absent)).to eq 'deleted file'
+          expect(@property.change_to_s(:file, :absent)).to eq 'deleted file'
         end
         it 'returns "deleted directory" when deleting a directory' do
-          expect(@property.change_to_s(:directory,:absent)).to eq 'deleted directory'
+          expect(@property.change_to_s(:directory, :absent)).to eq 'deleted directory'
         end
         it 'returns "replaced file of size..." when replacing a file' do
           @property.expects(:size_of_source).returns 42
-          expect(@property.change_to_s(:file,:file)).to match /replaced file of size  bytes with one of 42 bytes/
+          expect(@property.change_to_s(:file, :file)).to match /replaced file of size  bytes with one of 42 bytes/
         end
       end
       describe '.size_of_source' do
@@ -201,7 +201,7 @@ describe Puppet::Type.type(:fme_resource) do
         include FakeFS::SpecHelpers
         it 'returns the checksum of the source file' do
           mock_source_file = '/path'
-          File.open(mock_source_file,'w') do |f|
+          File.open(mock_source_file, 'w') do |f|
             f.write 'DATA'
           end
           #echo -n "DATA" | sha256sum -

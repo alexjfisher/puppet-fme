@@ -48,7 +48,7 @@ describe Puppet::Type.type(:fme_repository_item) do
         end
       end
       it 'should not support other values' do
-        expect { described_class.new( { :title => 'repo/item.fmw',:ensure => 'foo' })}.to raise_error(Puppet::Error, /Invalid value/)
+        expect { described_class.new( { :title => 'repo/item.fmw', :ensure => 'foo' })}.to raise_error(Puppet::Error, /Invalid value/)
       end
       describe '#sync' do
         context 'should = :present' do
@@ -122,7 +122,7 @@ describe Puppet::Type.type(:fme_repository_item) do
         it 'returns the checksum of the source file' do
           mock_source_file = '/path/to/item.fmw'
           FileUtils.mkdir_p '/path/to'
-          File.open(mock_source_file,'w') do |f|
+          File.open(mock_source_file, 'w') do |f|
             f.write 'DATA'
           end
           #echo -n "DATA" | sha256sum -
@@ -160,7 +160,7 @@ describe Puppet::Type.type(:fme_repository_item) do
         expect { described_class.new({ :title => 'repo/item.fmw', :ensure => 'present', :source => '/path/to/item.fmw', :services => 'service1' })}.to_not raise_error
       end
       it 'should support multiple services as array of strings' do
-        expect { described_class.new({ :title => 'repo/item.fmw', :ensure => 'present', :source => '/path/to/item.fmw', :services => ['service1','service2'] })}.to_not raise_error
+        expect { described_class.new({ :title => 'repo/item.fmw', :ensure => 'present', :source => '/path/to/item.fmw', :services => ['service1', 'service2'] })}.to_not raise_error
       end
       it 'should not support a comma separated list' do
         expect { described_class.new({ :title => 'repo/item.fmw', :ensure => 'present', :source => '/path/to/item.fmw', :services => 'service1,service2' })}.
@@ -172,7 +172,7 @@ describe Puppet::Type.type(:fme_repository_item) do
       end
       describe 'when testing is in sync' do
         it 'should not care about order' do
-          @property = described_class.new(:title => 'repo/item.fmw', :ensure => 'present', :source => '/path/to/item.fmw', :services => ['s1','s2','s3']).property(:services)
+          @property = described_class.new(:title => 'repo/item.fmw', :ensure => 'present', :source => '/path/to/item.fmw', :services => ['s1', 's2', 's3']).property(:services)
           expect(@property).to be_safe_insync([ 's1', 's2', 's3' ])
           expect(@property).to be_safe_insync([ 's2', 's1', 's3' ])
           expect(@property).to be_safe_insync([ 's3', 's1', 's2' ])

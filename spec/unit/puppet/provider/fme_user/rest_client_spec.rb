@@ -77,7 +77,7 @@ describe provider_class do
           :ensure   => :present,
           :name     => 'test2',
           :fullname => 'test user2',
-          :roles    => ['fmeuser','fmeadmin'],
+          :roles    => ['fmeuser', 'fmeadmin'],
           :provider => :rest_client
         } )
       end

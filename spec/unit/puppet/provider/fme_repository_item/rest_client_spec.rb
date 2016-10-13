@@ -238,7 +238,7 @@ describe provider_class do
             expect(provider.services.size).to eq(2)
             expect(provider.services[0]).to eq('service1')
             expect(provider.services[1]).to eq('service2')
-            expect(provider.services).to eq(['service1','service2'])
+            expect(provider.services).to eq(['service1', 'service2'])
           end
         end
       end
@@ -249,8 +249,8 @@ describe provider_class do
             with(:body => { 'services'=>'service2' }).
             to_return(:status => 200,
                       :body => 'dummy_response')
-            provider.expects(:process_put_services_response).with(['service1','service2'],'dummy_response')
-            provider.services = ['service1','service2']
+            provider.expects(:process_put_services_response).with(['service1', 'service2'], 'dummy_response')
+            provider.services = ['service1', 'service2']
         end
       end
 
@@ -268,7 +268,7 @@ describe provider_class do
         end
         context 'when 2 services' do
           it 'should return URI encoded string' do
-            expect(provider.services_body(['service1','service2'])).to eq('services=service1&services=service2')
+            expect(provider.services_body(['service1', 'service2'])).to eq('services=service1&services=service2')
           end
         end
       end
@@ -277,28 +277,28 @@ describe provider_class do
         context 'when response = 200' do
           it 'should call process_put_services_response_code_200' do
             response = mock('response')
-            dummy_services = ['service1','service2']
+            dummy_services = ['service1', 'service2']
             response.stubs(:code).returns(200)
             provider.expects(:process_put_services_response_code_200)
-            provider.process_put_services_response(dummy_services,response)
+            provider.process_put_services_response(dummy_services, response)
           end
         end
         context 'when response = 207' do
           it 'should call process_put_services_response_code_207' do
             response = mock('response')
-            dummy_services = ['service1','service2']
+            dummy_services = ['service1', 'service2']
             response.stubs(:code).returns(207)
-            provider.expects(:process_put_services_response_code_207).with(dummy_services,response)
-            provider.process_put_services_response(dummy_services,response)
+            provider.expects(:process_put_services_response_code_207).with(dummy_services, response)
+            provider.process_put_services_response(dummy_services, response)
           end
         end
         context 'when something else' do
           it 'should raise exception' do
             response = mock('response')
-            dummy_services = ['service1','service2']
+            dummy_services = ['service1', 'service2']
             response.stubs(:code).returns(404)
             response.stubs(:to_str).returns('{"message":"dummy"}')
-            expect{ provider.process_put_services_response(dummy_services,response) }.
+            expect{ provider.process_put_services_response(dummy_services, response) }.
               to raise_error(Puppet::Error,
                              /FME Rest API returned 404 when adding services to repo\/item\.fmw\. {"message"=>"dummy"}/)
           end
@@ -307,14 +307,14 @@ describe provider_class do
 
       describe '.process_put_services_response_code_200' do
         it 'should populate @property_hash' do
-          provider.process_put_services_response_code_200(['service1','service2'])
-          expect(provider.instance_variable_get('@property_hash')[:services]).to eq(['service1','service2'])
+          provider.process_put_services_response_code_200(['service1', 'service2'])
+          expect(provider.instance_variable_get('@property_hash')[:services]).to eq(['service1', 'service2'])
         end
       end
 
       describe '.process_put_services_response_code_207' do
         it 'should add sucessfully inserted services to @property_hash and raise error' do
-          services_being_inserted = ['foo','service2']
+          services_being_inserted = ['foo', 'service2']
           response = [
             { 'reason' => 'missing', 'name' => 'foo', 'status' => 409 },
             {
@@ -323,7 +323,7 @@ describe provider_class do
               'status' => 200
             }
           ].to_json
-          expect{ provider.process_put_services_response_code_207(services_being_inserted,response) }.
+          expect{ provider.process_put_services_response_code_207(services_being_inserted, response) }.
             to raise_error(Puppet::Error,
                            /The following services couldn't be added to repo\/item\.fmw: \["foo"\]/)
           expect(provider.instance_variable_get('@property_hash')[:services]).to eq(['service2'])

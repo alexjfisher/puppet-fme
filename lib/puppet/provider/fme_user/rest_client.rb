@@ -62,7 +62,7 @@ Puppet::Type.type(:fme_user).provide(:rest_client, :parent => Puppet::Provider::
   def modify_user
     url = "#{Fme::Helper.get_url}/security/accounts/#{resource[:name]}"
 
-    RestClient.put("#{url}?detail=high&#{get_new_params}",'',{ :content_type => 'application/x-www-form-urlencoded', :accept => :json }) do |response, request, result, &block|
+    RestClient.put("#{url}?detail=high&#{get_new_params}", '', { :content_type => 'application/x-www-form-urlencoded', :accept => :json }) do |response, request, result, &block|
       case response.code
       when 200
         @property_hash = Fme::Helper.response_to_property_hash(response)
@@ -80,7 +80,7 @@ Puppet::Type.type(:fme_user).provide(:rest_client, :parent => Puppet::Provider::
         :password => resource[:password],
         :fullName => ( resource[:fullname] || @property_hash[:fullname] ),
         :roles    => ( resource[:roles]    || @property_hash[:roles] )
-      }.delete_if{ |k,v| v.nil? }
+      }.delete_if{ |k, v| v.nil? }
     )
   end
 end

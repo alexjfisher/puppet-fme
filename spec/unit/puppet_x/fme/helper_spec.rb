@@ -3,20 +3,20 @@ require 'spec_helper'
 describe Fme::Helper do
   describe '.get_url' do
     it 'should call read_settings' do
-      Fme::Helper.expects(:read_settings).returns({ 'username' => 'user','password' => 'password' })
+      Fme::Helper.expects(:read_settings).returns({ 'username' => 'user', 'password' => 'password' })
       expect(Fme::Helper.get_url)
     end
     describe 'returned url' do
       describe 'port' do
         context 'when not set' do
           it 'should default to 80' do
-            Fme::Helper.expects(:read_settings).returns({ 'username' => 'user','password' => 'password' })
+            Fme::Helper.expects(:read_settings).returns({ 'username' => 'user', 'password' => 'password' })
             expect(Fme::Helper.get_url).to match(/:80/)
           end
         end
         context 'when port is set to 443' do
           it 'should return URL with port 443' do
-            Fme::Helper.expects(:read_settings).returns({ 'username' => 'user','password' => 'password', 'port' => 443 })
+            Fme::Helper.expects(:read_settings).returns({ 'username' => 'user', 'password' => 'password', 'port' => 443 })
             expect(Fme::Helper.get_url).to match(/:443/)
           end
         end
@@ -24,13 +24,13 @@ describe Fme::Helper do
       describe 'protocol' do
         context 'when not set' do
           it 'should return http URL' do
-            Fme::Helper.expects(:read_settings).returns({ 'username' => 'user','password' => 'password' })
+            Fme::Helper.expects(:read_settings).returns({ 'username' => 'user', 'password' => 'password' })
             expect(Fme::Helper.get_url).to match(/http:\/\//)
           end
         end
         context 'when set to https' do
           it 'should return https URL' do
-            Fme::Helper.expects(:read_settings).returns({ 'username' => 'user','password' => 'password', 'protocol' => 'https' })
+            Fme::Helper.expects(:read_settings).returns({ 'username' => 'user', 'password' => 'password', 'protocol' => 'https' })
             expect(Fme::Helper.get_url).to match(/https:\/\//)
           end
         end
@@ -38,13 +38,13 @@ describe Fme::Helper do
       describe 'host' do
         context 'when not set' do
           it 'should return localhost URL' do
-            Fme::Helper.expects(:read_settings).returns({ 'username' => 'user','password' => 'password' })
+            Fme::Helper.expects(:read_settings).returns({ 'username' => 'user', 'password' => 'password' })
             expect(Fme::Helper.get_url).to match(/@localhost:/)
           end
         end
         context 'when set to example.com' do
           it 'should return URL for example.com' do
-            Fme::Helper.expects(:read_settings).returns({ 'username' => 'user','password' => 'password', 'host' => 'example.com' })
+            Fme::Helper.expects(:read_settings).returns({ 'username' => 'user', 'password' => 'password', 'host' => 'example.com' })
             expect(Fme::Helper.get_url).to match(/@example.com:/)
           end
         end

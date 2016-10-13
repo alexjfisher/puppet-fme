@@ -24,12 +24,12 @@ describe provider_class do
       end
       it 'should call extract_metadata_from_response with hash parsed from json response' do
         provider.expects(:extract_metadata_from_response).with('a' => 1, 'b' => 2)
-        provider.get_file_metadata('FME_SHAREDRESOURCE_DATA','/path/to/resource')
+        provider.get_file_metadata('FME_SHAREDRESOURCE_DATA', '/path/to/resource')
       end
       it 'should return result of extract_metadata_from_response' do
         mock_hash = { 'mock' => 'hash' }
         provider.expects(:extract_metadata_from_response).returns mock_hash
-        expect(provider.get_file_metadata('FME_SHAREDRESOURCE_DATA','/path/to/resource')).to eq mock_hash
+        expect(provider.get_file_metadata('FME_SHAREDRESOURCE_DATA', '/path/to/resource')).to eq mock_hash
       end
     end
     context 'when response code is 404' do
@@ -38,7 +38,7 @@ describe provider_class do
           to_return(:status => 404)
       end
       it 'should return nil' do
-        expect(provider.get_file_metadata('FME_SHAREDRESOURCE_DATA','/path/to/resource')).to be_nil
+        expect(provider.get_file_metadata('FME_SHAREDRESOURCE_DATA', '/path/to/resource')).to be_nil
       end
     end
     context 'when response code is 403' do
@@ -47,7 +47,7 @@ describe provider_class do
           to_return(:status => 403, :body => { 'response' => 'hash' }.to_json)
       end
       it 'should raise exception' do
-        expect{provider.get_file_metadata('FME_SHAREDRESOURCE_DATA','/path/to/resource')}.
+        expect{provider.get_file_metadata('FME_SHAREDRESOURCE_DATA', '/path/to/resource')}.
           to raise_error(Puppet::Error,
                          /FME Rest API returned 403 when getting metadata for FME_SHAREDRESOURCE_DATA:\/path\/to\/resource\. {"response"=>"hash"}/)
       end
@@ -195,7 +195,7 @@ describe provider_class do
       resource[:source] = mock_source_file
       mock_data = 'DATA'
       FakeFS do
-        File.open(mock_source_file,'w') do |f|
+        File.open(mock_source_file, 'w') do |f|
           f.write mock_data
         end
         expect(provider.read_source).to eq mock_data
@@ -226,7 +226,7 @@ describe provider_class do
       provider.destroy
     end
     it 'should clear the property hash' do
-      provider.instance_variable_set(:@property_hash,{ :ensure => :file })
+      provider.instance_variable_set(:@property_hash, { :ensure => :file })
       expect(provider.instance_variable_get(:@property_hash)).to eq :ensure => :file
       provider.destroy
       expect(provider.instance_variable_get(:@property_hash)).to be_empty
@@ -236,7 +236,7 @@ describe provider_class do
   describe '#properties' do
     context 'when property hash is empty' do
       before :each do
-        provider.instance_variable_set(:@property_hash,{})
+        provider.instance_variable_set(:@property_hash, {})
       end
       context 'when resource is found' do
         it 'should return result of get_file_metadata' do
