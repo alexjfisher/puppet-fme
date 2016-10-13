@@ -208,14 +208,14 @@ describe Puppet::Type.type(:fme_repository_item) do
       @resource = described_class.new(:title => 'resourcetitle', :repository => 'repo', :item => 'item.fmw', :source => '/path/to/item.fmw', :ensure => :present)
       @catalog.add_resource @resource
       req = @resource.autorequire
-      expect(req.find { |relationship| relationship.source == @settings_file and relationship.target == @resource }).to_not be_nil
+      expect(req.find { |relationship| relationship.source == @settings_file && relationship.target == @resource }).to_not be_nil
     end
 
     it 'should autorequire its repository' do
       @resource = described_class.new(:title => 'resourcetitle', :repository => 'repo', :item => 'item.fmw', :source => '/path/to/item.fmw', :ensure => :present)
       @catalog.add_resource @resource
       req = @resource.autorequire
-      expect(req.find { |relationship| relationship.source == @repository and relationship.target == @resource }).to_not be_nil
+      expect(req.find { |relationship| relationship.source == @repository && relationship.target == @resource }).to_not be_nil
     end
   end
 end

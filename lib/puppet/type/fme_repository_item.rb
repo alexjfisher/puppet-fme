@@ -14,7 +14,7 @@ Puppet::Type.newtype(:fme_repository_item) do
     defaultto(:present)
 
     def insync?(is)
-      return false if is == :present and !items_match?
+      return false if is == :present && !items_match?
       super
     end
 
@@ -60,7 +60,7 @@ Puppet::Type.newtype(:fme_repository_item) do
   end
 
   validate do
-    fail "'name' should not be used" unless @original_parameters[:name].nil? or @original_parameters[:name] == "#{@original_parameters[:repository]}/#{@original_parameters[:item]}"
+    fail "'name' should not be used" unless @original_parameters[:name].nil? || @original_parameters[:name] == "#{@original_parameters[:repository]}/#{@original_parameters[:item]}"
     if match = @title.match(%r{^(.*)/(.*)$}) # rubocop:disable Lint/AssignmentInCondition
       fail "'repository' parameter #{self[:repository]} must match resource title #{@title} or be omitted" unless match.captures[0] == self[:repository]
       fail "'item' parameter #{self[:item]} must match resource title #{@title} or be omitted" unless match.captures[1] == self[:item]
@@ -84,7 +84,7 @@ Puppet::Type.newtype(:fme_repository_item) do
     desc 'The default namevar'
     defaultto ''
     munge do |value|
-      if value.empty? and resource[:repository] and resource[:item]
+      if value.empty? && resource[:repository] && resource[:item]
         "#{resource[:repository]}/#{resource[:item]}"
       else
         fail "Use resource name style <repository>/<item> OR specify both 'repository' and 'item'" unless value =~ %r{^(.*)/(.*)$}

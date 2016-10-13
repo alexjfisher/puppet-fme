@@ -57,7 +57,7 @@ Puppet::Type.newtype(:fme_resource) do
     end
 
     def insync?(is)
-      if should == :file and is == :file
+      if should == :file && is == :file
         return false unless sizes_match?
         if @resource.original_parameters[:checksum]
           return false unless checksums_match?
@@ -97,19 +97,19 @@ Puppet::Type.newtype(:fme_resource) do
     end
 
     def new_file?(currentvalue, newvalue)
-      currentvalue == :absent and newvalue == :file
+      currentvalue == :absent && newvalue == :file
     end
 
     def new_directory?(currentvalue, newvalue)
-      currentvalue == :absent and newvalue == :directory
+      currentvalue == :absent && newvalue == :directory
     end
 
     def deleted_file?(currentvalue, newvalue)
-      currentvalue == :file and newvalue == :absent
+      currentvalue == :file && newvalue == :absent
     end
 
     def deleted_directory?(currentvalue, newvalue)
-      currentvalue == :directory and newvalue == :absent
+      currentvalue == :directory && newvalue == :absent
     end
   end
 
