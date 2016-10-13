@@ -14,7 +14,7 @@ Puppet::Type.type(:fme_repository).provide(:rest_client, :parent => Puppet::Prov
 
   mk_resource_methods
 
-  def initialize(value={})
+  def initialize(value = {})
     super(value)
     @baseurl = Fme::Helper.get_url
   end

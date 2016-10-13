@@ -30,7 +30,7 @@ Puppet::Type.type(:fme_user).provide(:rest_client, :parent => Puppet::Provider::
     end
   end
 
-  def initialize(value={})
+  def initialize(value = {})
     super(value)
     @property_flush = {}
   end

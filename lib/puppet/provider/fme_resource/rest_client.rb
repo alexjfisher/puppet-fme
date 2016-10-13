@@ -13,7 +13,7 @@ Puppet::Type.type(:fme_resource).provide(:rest_client) do
     confine :exists => '/etc/fme_api_settings.yaml'
   end
 
-  def initialize(value={})
+  def initialize(value = {})
     super(value)
     @baseurl = Fme::Helper.get_url
   end
