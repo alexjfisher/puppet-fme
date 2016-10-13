@@ -3,7 +3,7 @@ Puppet::Type.newtype(:fme_resource) do
   desc 'Puppet type to manage FME shared resources'
 
   def self.title_patterns
-    identity = lambda {|x| x}
+    identity = lambda { |x| x }
     [
       [
         /^([^:]+)$/,

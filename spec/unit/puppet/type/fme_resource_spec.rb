@@ -44,11 +44,11 @@ describe Puppet::Type.type(:fme_resource) do
       end
       [ :present, :absent, :file, :directory ].each do |value|
         it "should support #{value} as a value to ensure" do
-          expect { described_class.new({ :title => 'RESOURCE:/path', :source => '/path', :ensure => value })}.to_not raise_error
+          expect { described_class.new({ :title => 'RESOURCE:/path', :source => '/path', :ensure => value }) }.to_not raise_error
         end
       end
       it 'should not support other values' do
-        expect { described_class.new({ :title => 'RESOURCE:/path', :ensure => 'foo' })}.to raise_error(Puppet::Error, /Invalid value/)
+        expect { described_class.new({ :title => 'RESOURCE:/path', :ensure => 'foo' }) }.to raise_error(Puppet::Error, /Invalid value/)
       end
       describe ':present is an alias for :file' do
         it 'resource ensure set to :present should equal :file' do
@@ -220,7 +220,7 @@ describe Puppet::Type.type(:fme_resource) do
 
     describe 'source' do
       it 'should fail if not an absolute path' do
-        expect { described_class.new({ :title => 'RESOURCE:/path', :source => 'not_absolute', :ensure => :file })}.to raise_error(Puppet::Error, /'source' file path must be absolute, not 'not_absolute'/)
+        expect { described_class.new({ :title => 'RESOURCE:/path', :source => 'not_absolute', :ensure => :file }) }.to raise_error(Puppet::Error, /'source' file path must be absolute, not 'not_absolute'/)
       end
     end
   end

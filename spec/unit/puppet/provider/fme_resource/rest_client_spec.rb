@@ -47,7 +47,7 @@ describe provider_class do
           to_return(:status => 403, :body => { 'response' => 'hash' }.to_json)
       end
       it 'should raise exception' do
-        expect{provider.get_file_metadata('FME_SHAREDRESOURCE_DATA', '/path/to/resource')}.
+        expect{ provider.get_file_metadata('FME_SHAREDRESOURCE_DATA', '/path/to/resource') }.
           to raise_error(Puppet::Error,
                          /FME Rest API returned 403 when getting metadata for FME_SHAREDRESOURCE_DATA:\/path\/to\/resource\. {"response"=>"hash"}/)
       end
@@ -72,7 +72,7 @@ describe provider_class do
       it 'should raise error' do
         stub_request(:get, 'http://www.example.com/resources/connections/FME_SHAREDRESOURCE_DATA/filesys/path/to/resource').
           to_return(:status => 404)
-        expect{provider.checksum}.
+        expect{ provider.checksum }.
           to raise_error(Puppet::Error, /Error calculating checksum 404/)
       end
     end
@@ -140,7 +140,7 @@ describe provider_class do
           stub_request(:post, 'http://url/').
             with(:body => 'DATA', :headers => { 'Post'=>'params' }).
             to_return(:status => 201, :body => '')
-          expect{provider.upload_file}.to_not raise_error
+          expect{ provider.upload_file }.to_not raise_error
         end
       end
       context 'when unsuccessful' do
@@ -148,7 +148,7 @@ describe provider_class do
           stub_request(:post, 'http://url/').
             with(:body => 'DATA', :headers => { 'Post'=>'params' }).
             to_return(:status => 409, :body => '{"what": "/for/bar/upload", "reason": "exists", "message": "File \'upload\' already exists"}')
-          expect{provider.upload_file}.to raise_error(Puppet::Error, /FME Rest API returned 409 when uploading FME_SHAREDRESOURCE_DATA:\/path\/to\/resource\. {"what"=>"\/for\/bar\/upload", "reason"=>"exists", "message"=>"File 'upload' already exists"/)
+          expect{ provider.upload_file }.to raise_error(Puppet::Error, /FME Rest API returned 409 when uploading FME_SHAREDRESOURCE_DATA:\/path\/to\/resource\. {"what"=>"\/for\/bar\/upload", "reason"=>"exists", "message"=>"File 'upload' already exists"/)
         end
       end
     end
@@ -162,7 +162,7 @@ describe provider_class do
         stub_request(:post, 'http://url/').
           with(:body => 'directoryname=resource&type=DIR').
           to_return(:status => 201)
-        expect{provider.create_directory}.to_not raise_error
+        expect{ provider.create_directory }.to_not raise_error
       end
     end
     context 'when unsuccessful' do
@@ -170,7 +170,7 @@ describe provider_class do
         stub_request(:post, 'http://url/').
           with(:body => 'directoryname=resource&type=DIR').
           to_return(:status => 409, :body => '{"what": "/for/bar/testdir", "reason": "exists", "message": "Directory \'testdir\' already exists"}')
-        expect{provider.create_directory}.to raise_error(Puppet::Error, /FME Rest API returned 409 when creating directory FME_SHAREDRESOURCE_DATA:\/path\/to\/resource\. {"what"=>"\/for\/bar\/testdir", "reason"=>"exists", "message"=>"Directory 'testdir' already exists"/)
+        expect{ provider.create_directory }.to raise_error(Puppet::Error, /FME Rest API returned 409 when creating directory FME_SHAREDRESOURCE_DATA:\/path\/to\/resource\. {"what"=>"\/for\/bar\/testdir", "reason"=>"exists", "message"=>"Directory 'testdir' already exists"/)
       end
     end
   end
@@ -207,13 +207,13 @@ describe provider_class do
     context 'when has_source?' do
       it 'should do nothing' do
         provider.expects(:has_source?).returns(true)
-        expect{provider.validate_source}.to_not raise_error
+        expect{ provider.validate_source }.to_not raise_error
       end
     end
     context 'when has_source? is false' do
       it 'should raise an exception' do
         provider.expects(:has_source?).returns(false)
-        expect{provider.validate_source}.to raise_error(Puppet::Error, /source is required when creating new resource file/)
+        expect{ provider.validate_source }.to raise_error(Puppet::Error, /source is required when creating new resource file/)
       end
     end
   end
