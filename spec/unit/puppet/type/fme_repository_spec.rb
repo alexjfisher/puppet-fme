@@ -5,12 +5,12 @@ describe Puppet::Type.type(:fme_repository) do
     Fme::Helper.stubs(:get_url).returns('www.example.com')
   end
   describe 'when validating attributes' do
-    [ :name, :provider ].each do |param|
+    [:name, :provider].each do |param|
       it "should have a #{param} parameter" do
         expect(described_class.attrtype(param)).to eq(:param)
       end
     end
-    [ :ensure, :description ].each do |prop|
+    [:ensure, :description].each do |prop|
       it "should have a #{prop} property" do
         expect(described_class.attrtype(prop)).to eq(:property)
       end
@@ -25,7 +25,7 @@ describe Puppet::Type.type(:fme_repository) do
 
   describe 'when validating attribute values' do
     describe 'ensure' do
-      [ :present, :absent ].each do |value|
+      [:present, :absent].each do |value|
         it "should support #{value} as a value to ensure" do
           expect { described_class.new({ :name => 'example_user', :ensure => value }) }.to_not raise_error
         end

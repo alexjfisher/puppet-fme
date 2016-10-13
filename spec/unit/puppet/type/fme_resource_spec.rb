@@ -7,12 +7,12 @@ describe Puppet::Type.type(:fme_resource) do
     Fme::Helper.stubs(:get_url).returns('www.example.com')
   end
   describe 'when validating attributes' do
-    [ :name, :provider, :resource, :path, :checksum ].each do |param|
+    [:name, :provider, :resource, :path, :checksum].each do |param|
       it "should have a #{param} parameter" do
         expect(described_class.attrtype(param)).to eq(:param)
       end
     end
-    [ :ensure ].each do |prop|
+    [:ensure].each do |prop|
       it "should have a #{prop} property" do
         expect(described_class.attrtype(prop)).to eq(:property)
       end
@@ -23,7 +23,7 @@ describe Puppet::Type.type(:fme_resource) do
     it 'should have 3 namevars' do
       expect(described_class.key_attributes.size).to eq(3)
     end
-    [ :name, :resource, :path ].each do |param|
+    [:name, :resource, :path].each do |param|
       it "'#{param}' should be a namevar" do
         expect(described_class.key_attributes).to include(param)
       end
@@ -42,7 +42,7 @@ describe Puppet::Type.type(:fme_resource) do
         @resource = Puppet::Type.type(:fme_resource).new({ :title => 'RESOURCE:/path', :ensure => :file, :source => '/path' })
         @property = @resource.property(:ensure)
       end
-      [ :present, :absent, :file, :directory ].each do |value|
+      [:present, :absent, :file, :directory].each do |value|
         it "should support #{value} as a value to ensure" do
           expect { described_class.new({ :title => 'RESOURCE:/path', :source => '/path', :ensure => value }) }.to_not raise_error
         end

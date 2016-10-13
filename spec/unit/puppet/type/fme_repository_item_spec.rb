@@ -7,12 +7,12 @@ describe Puppet::Type.type(:fme_repository_item) do
     Fme::Helper.stubs(:get_url).returns('www.example.com')
   end
   describe 'when validating attributes' do
-    [ :name, :provider, :repository, :item, :source ].each do |param|
+    [:name, :provider, :repository, :item, :source].each do |param|
       it "should have a #{param} parameter" do
         expect(described_class.attrtype(param)).to eq(:param)
       end
     end
-    [ :ensure, :description, :item_title, :type, :last_save_date, :services ].each do |prop|
+    [:ensure, :description, :item_title, :type, :last_save_date, :services].each do |prop|
       it "should have a #{prop} property" do
         expect(described_class.attrtype(prop)).to eq(:property)
       end
@@ -23,7 +23,7 @@ describe Puppet::Type.type(:fme_repository_item) do
     it 'should have 3 namevars' do
       expect(described_class.key_attributes.size).to eq(3)
     end
-    [ :name, :repository, :item ].each do |param|
+    [:name, :repository, :item].each do |param|
       it "'#{param}' should be a namevar" do
         expect(described_class.key_attributes).to include(param)
       end
@@ -42,7 +42,7 @@ describe Puppet::Type.type(:fme_repository_item) do
         @resource = Puppet::Type.type(:fme_repository_item).new({ :title => 'repo:/item.fmw', :ensure => :present, :source => '/path/to/item.fmw' })
         @property = @resource.property(:ensure)
       end
-      [ :present, :absent ].each do |value|
+      [:present, :absent].each do |value|
         it "should support #{value} as a value to ensure" do
           expect { described_class.new({ :title => 'repo/item.fmw', :source => '/path/to/item.fmw', :ensure => value }) }.to_not raise_error
         end
@@ -173,10 +173,10 @@ describe Puppet::Type.type(:fme_repository_item) do
       describe 'when testing is in sync' do
         it 'should not care about order' do
           @property = described_class.new(:title => 'repo/item.fmw', :ensure => 'present', :source => '/path/to/item.fmw', :services => ['s1', 's2', 's3']).property(:services)
-          expect(@property).to be_safe_insync([ 's1', 's2', 's3' ])
-          expect(@property).to be_safe_insync([ 's2', 's1', 's3' ])
-          expect(@property).to be_safe_insync([ 's3', 's1', 's2' ])
-          expect(@property).to be_safe_insync([ 's3', 's2', 's1' ])
+          expect(@property).to be_safe_insync(['s1', 's2', 's3'])
+          expect(@property).to be_safe_insync(['s2', 's1', 's3'])
+          expect(@property).to be_safe_insync(['s3', 's1', 's2'])
+          expect(@property).to be_safe_insync(['s3', 's2', 's1'])
         end
       end
     end
@@ -185,7 +185,7 @@ describe Puppet::Type.type(:fme_repository_item) do
       before :each do
         @item = Puppet::Type.type(:fme_repository_item).new({ :title => 'repo/item.fmw', :ensure => 'present', :source => '/path/to/item.fmw' })
       end
-      [ :description, :item_title, :type, :last_save_date ].each do |param|
+      [:description, :item_title, :type, :last_save_date].each do |param|
         describe param do
           it 'should raise error' do
             expect { @item[param] = 'foo' }.to raise_error(Puppet::Error, /#{param} is read-only/)

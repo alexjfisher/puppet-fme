@@ -8,15 +8,15 @@ Puppet::Type.newtype(:fme_resource) do
       [
         /^([^:]+)$/,
         [
-          [:name, identity ]
+          [:name, identity]
         ]
       ],
       [
         /^((.*):(.*))$/,
         [
-          [:name,     identity ],
-          [:resource, identity ],
-          [:path,     identity ]
+          [:name,     identity],
+          [:resource, identity],
+          [:path,     identity]
         ]
       ]
     ]
