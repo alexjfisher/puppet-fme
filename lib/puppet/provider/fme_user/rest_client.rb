@@ -17,7 +17,7 @@ Puppet::Type.type(:fme_user).provide(:rest_client, :parent => Puppet::Provider::
   def self.instances
     baseurl = Fme::Helper.get_url
     url = "#{baseurl}/security/accounts"
-    response = RestClient.get(url, { :params => { 'detail' => 'high' }, :accept => :json })
+    response = RestClient.get(url, :params => { 'detail' => 'high' }, :accept => :json)
     users = JSON.parse(response)
     users.collect do |user|
       user_properties = {}
@@ -62,7 +62,7 @@ Puppet::Type.type(:fme_user).provide(:rest_client, :parent => Puppet::Provider::
   def modify_user
     url = "#{Fme::Helper.get_url}/security/accounts/#{resource[:name]}"
 
-    RestClient.put("#{url}?detail=high&#{get_new_params}", '', { :content_type => 'application/x-www-form-urlencoded', :accept => :json }) do |response, request, result, &block|
+    RestClient.put("#{url}?detail=high&#{get_new_params}", '', :content_type => 'application/x-www-form-urlencoded', :accept => :json) do |response, request, result, &block|
       case response.code
       when 200
         @property_hash = Fme::Helper.response_to_property_hash(response)

@@ -39,20 +39,20 @@ describe Puppet::Type.type(:fme_resource) do
 
         Puppet::Type.type(:fme_resource).stubs(:defaultprovider).returns @provider_class
 
-        @resource = Puppet::Type.type(:fme_resource).new({ :title => 'RESOURCE:/path', :ensure => :file, :source => '/path' })
+        @resource = Puppet::Type.type(:fme_resource).new(:title => 'RESOURCE:/path', :ensure => :file, :source => '/path')
         @property = @resource.property(:ensure)
       end
       [:present, :absent, :file, :directory].each do |value|
         it "should support #{value} as a value to ensure" do
-          expect { described_class.new({ :title => 'RESOURCE:/path', :source => '/path', :ensure => value }) }.to_not raise_error
+          expect { described_class.new(:title => 'RESOURCE:/path', :source => '/path', :ensure => value) }.to_not raise_error
         end
       end
       it 'should not support other values' do
-        expect { described_class.new({ :title => 'RESOURCE:/path', :ensure => 'foo' }) }.to raise_error(Puppet::Error, /Invalid value/)
+        expect { described_class.new(:title => 'RESOURCE:/path', :ensure => 'foo') }.to raise_error(Puppet::Error, /Invalid value/)
       end
       describe ':present is an alias for :file' do
         it 'resource ensure set to :present should equal :file' do
-          @resource = described_class.new({ :title => 'RESOURCE:/path', :source => '/path', :ensure => :present })
+          @resource = described_class.new(:title => 'RESOURCE:/path', :source => '/path', :ensure => :present)
           expect(@resource[:ensure]).to eq(:file)
         end
       end
@@ -63,7 +63,7 @@ describe Puppet::Type.type(:fme_resource) do
           end
           describe 'when already a file' do
             it 'should destroy then upload file' do
-              @provider.expects(:properties).returns({ :ensure => :file, :size => 42 }).twice
+              @provider.expects(:properties).returns(:ensure => :file, :size => 42).twice
               @provider.expects(:destroy)
               @provider.expects(:upload_file)
               @property.sync
@@ -71,14 +71,14 @@ describe Puppet::Type.type(:fme_resource) do
           end
           describe 'when currently absent' do
             it 'should upload file' do
-              @provider.expects(:properties).returns({ :ensure => :absent })
+              @provider.expects(:properties).returns(:ensure => :absent)
               @provider.expects(:upload_file)
               @property.sync
             end
           end
           describe 'when currently directory' do
             it 'should raise error' do
-              @provider.expects(:properties).returns({ :ensure => :directory })
+              @provider.expects(:properties).returns(:ensure => :directory)
               expect { @property.sync }.to raise_error(Puppet::Error, /Cannot replace a directory with a file!/)
             end
           end
@@ -89,13 +89,13 @@ describe Puppet::Type.type(:fme_resource) do
           end
           describe 'when currently file' do
             it 'should raise error if trying to replace with file' do
-              @provider.expects(:properties).returns({ :ensure => :file })
+              @provider.expects(:properties).returns(:ensure => :file)
               expect { @property.sync }.to raise_error(Puppet::Error, /Cannot replace a file with a directory!/)
             end
           end
           describe 'otherwise' do
             it 'should create directory' do
-              @provider.expects(:properties).returns({ :ensure => :absent })
+              @provider.expects(:properties).returns(:ensure => :absent)
               @provider.expects(:create_directory)
               @property.sync
             end
@@ -126,7 +126,7 @@ describe Puppet::Type.type(:fme_resource) do
         end
         context 'when checksumming enabled' do
           before :each do
-            @resource = Puppet::Type.type(:fme_resource).new({ :title => 'RESOURCE:/path', :ensure => :file, :source => '/path', :checksum => true })
+            @resource = Puppet::Type.type(:fme_resource).new(:title => 'RESOURCE:/path', :ensure => :file, :source => '/path', :checksum => true)
             @property = @resource.property(:ensure)
             @property.should = :file
             @property.expects(:sizes_match?).returns true
@@ -143,12 +143,12 @@ describe Puppet::Type.type(:fme_resource) do
       end
       describe '.sizes_match?' do
         it 'returns true when size_of_source matches size returned by provider' do
-          @provider.expects(:properties).returns({ :size => 4242 })
+          @provider.expects(:properties).returns(:size => 4242)
           @property.expects(:size_of_source).returns 4242
           expect(@property.sizes_match?).to eq true
         end
         it 'returns false when size_of_source does not match size returned by provider' do
-          @provider.expects(:properties).returns({ :size => 4242 })
+          @provider.expects(:properties).returns(:size => 4242)
           @property.expects(:size_of_source).returns 42
           expect(@property.sizes_match?).to eq false
         end
@@ -220,7 +220,7 @@ describe Puppet::Type.type(:fme_resource) do
 
     describe 'source' do
       it 'should fail if not an absolute path' do
-        expect { described_class.new({ :title => 'RESOURCE:/path', :source => 'not_absolute', :ensure => :file }) }.to raise_error(Puppet::Error, /'source' file path must be absolute, not 'not_absolute'/)
+        expect { described_class.new(:title => 'RESOURCE:/path', :source => 'not_absolute', :ensure => :file) }.to raise_error(Puppet::Error, /'source' file path must be absolute, not 'not_absolute'/)
       end
     end
   end

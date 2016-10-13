@@ -133,7 +133,7 @@ describe provider_class do
         provider.stubs(:validate_source)
         provider.stubs(:read_source).returns('DATA')
         provider.stubs(:get_post_url).returns('http://URL')
-        provider.stubs(:post_params_for_upload_file).returns({ 'post' => 'params' })
+        provider.stubs(:post_params_for_upload_file).returns('post' => 'params')
       end
       context 'when successful' do
         it 'should not raise any error' do
@@ -226,7 +226,7 @@ describe provider_class do
       provider.destroy
     end
     it 'should clear the property hash' do
-      provider.instance_variable_set(:@property_hash, { :ensure => :file })
+      provider.instance_variable_set(:@property_hash, :ensure => :file)
       expect(provider.instance_variable_get(:@property_hash)).to eq :ensure => :file
       provider.destroy
       expect(provider.instance_variable_get(:@property_hash)).to be_empty
@@ -240,14 +240,14 @@ describe provider_class do
       end
       context 'when resource is found' do
         it 'should return result of get_file_metadata' do
-          provider.expects(:get_file_metadata).returns({ :ensure => :file })
-          expect(provider.properties).to eq({ :ensure => :file })
+          provider.expects(:get_file_metadata).returns(:ensure => :file)
+          expect(provider.properties).to eq(:ensure => :file)
         end
       end
       context 'when resource is not found' do
         it 'should set :ensure => :absent' do
           provider.expects(:get_file_metadata).returns nil
-          expect(provider.properties).to eq({ :ensure => :absent })
+          expect(provider.properties).to eq(:ensure => :absent)
         end
       end
     end
