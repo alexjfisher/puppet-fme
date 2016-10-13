@@ -14,7 +14,7 @@ describe Puppet::Type.type(:fme_user) do
     end
   end
   describe 'namevar validation' do
-    it "should have :name as its namevar" do
+    it 'should have :name as its namevar' do
       expect(described_class.key_attributes).to eq([:name])
     end
   end

@@ -15,7 +15,7 @@ describe provider_class do
     describe 'returns correct instances' do
       context 'when there are no repositories' do
         before :each do
-          stub_request(:get, "http://www.example.com/repositories?detail=high").to_return(:body => [].to_json)
+          stub_request(:get, 'http://www.example.com/repositories?detail=high').to_return(:body => [].to_json)
         end
         it 'should return no resources' do
           expect(described_class.instances.size).to eq(0)
@@ -23,9 +23,9 @@ describe provider_class do
       end
       context 'when there is 1 repository with no items' do
         before :each do
-          stub_request(:get, "http://www.example.com/repositories?detail=high").
+          stub_request(:get, 'http://www.example.com/repositories?detail=high').
             to_return(:body => [{'name'=>'repo1', 'description'=>'empty repo'}].to_json)
-          stub_request(:get, "http://www.example.com/repositories/repo1/items?detail=high").to_return(:body => [].to_json)
+          stub_request(:get, 'http://www.example.com/repositories/repo1/items?detail=high').to_return(:body => [].to_json)
         end
         it 'should return no resources' do
           expect(described_class.instances.size).to eq(0)
@@ -33,19 +33,19 @@ describe provider_class do
       end
       context 'when there are 2 repositories with 2 items' do
         before :each do
-          stub_request(:get, "http://www.example.com/repositories?detail=high").
+          stub_request(:get, 'http://www.example.com/repositories?detail=high').
             to_return(:body =>
                       [
                         {'name'=>'repo1', 'description'=>'test repo1'},
                         {'name'=>'repo2', 'description'=>'test repo2'}
                       ].to_json)
-            stub_request(:get, "http://www.example.com/repositories/repo1/items?detail=high").
+            stub_request(:get, 'http://www.example.com/repositories/repo1/items?detail=high').
               to_return(:body =>
                         [
                           {'name'=>'item1.fmw', 'description' => 'item1 description', 'title' => 'title1', 'type' => 'WORKSPACE', 'lastSaveDate' => '2014-12-11T11:36:12'},
                           {'name'=>'item2.fmw', 'description' => 'item2 description', 'title' => 'title2', 'type' => 'WORKSPACE', 'lastSaveDate' => '2014-12-11T11:36:13'}
                         ].to_json)
-              stub_request(:get, "http://www.example.com/repositories/repo2/items?detail=high").
+              stub_request(:get, 'http://www.example.com/repositories/repo2/items?detail=high').
                 to_return(:body =>
                           [
                             {'name'=>'item3.fmw', 'description' => 'item3 description', 'title' => 'title3', 'type' => 'WORKSPACE', 'lastSaveDate' => '2014-12-11T11:36:14'},
@@ -58,7 +58,7 @@ describe provider_class do
         end
 
         it 'should return the resource repo1/item1.fmw' do
-          expect(described_class.instances[0].instance_variable_get("@property_hash")).to eq( {
+          expect(described_class.instances[0].instance_variable_get('@property_hash')).to eq( {
             :ensure         => :present,
             :provider       => :rest_client,
             :name           => 'repo1/item1.fmw',
@@ -72,7 +72,7 @@ describe provider_class do
         end
 
         it 'should return the resource repo1/item2.fmw' do
-          expect(described_class.instances[1].instance_variable_get("@property_hash")).to eq( {
+          expect(described_class.instances[1].instance_variable_get('@property_hash')).to eq( {
             :ensure         => :present,
             :provider       => :rest_client,
             :name           => 'repo1/item2.fmw',
@@ -86,7 +86,7 @@ describe provider_class do
         end
 
         it 'should return the resource repo2/item3.fmw' do
-          expect(described_class.instances[2].instance_variable_get("@property_hash")).to eq( {
+          expect(described_class.instances[2].instance_variable_get('@property_hash')).to eq( {
             :ensure         => :present,
             :provider       => :rest_client,
             :name           => 'repo2/item3.fmw',
@@ -100,7 +100,7 @@ describe provider_class do
         end
 
         it 'should return the resource repo2/item4.fmw' do
-          expect(described_class.instances[3].instance_variable_get("@property_hash")).to eq( {
+          expect(described_class.instances[3].instance_variable_get('@property_hash')).to eq( {
             :ensure         => :present,
             :provider       => :rest_client,
             :name           => 'repo2/item4.fmw',
@@ -159,14 +159,14 @@ describe provider_class do
       end
       context 'when API returns success' do
         before :each do
-          stub_request(:post, "http://www.example.com/repositories/repo/items").
-            with(:body => "FILEDATA",
+          stub_request(:post, 'http://www.example.com/repositories/repo/items').
+            with(:body => 'FILEDATA',
                  :headers => {'Accept'=>'application/json', 'Content-Disposition'=>'attachment; filename="item.fmw"', 'Content-Type'=>'application/octet-stream', 'Detail'=>'low', 'Multipart'=>'true', 'Repository'=>'repo'}).
             to_return(:status => 201, :body => {'name'=>'test.fmw', 'description' => 'a description', 'title' => 'a title', 'type' => 'WORKSPACE', 'lastSaveDate' => '2014-12-11T11:32:50'}.to_json)
         end
         it 'should create a repository_item' do
           provider.create
-          expect(provider.instance_variable_get("@property_hash")).to eq( {
+          expect(provider.instance_variable_get('@property_hash')).to eq( {
             :ensure         => :present,
             :provider       => :rest_client,
             :name           => 'repo/test.fmw',
@@ -181,8 +181,8 @@ describe provider_class do
       end
       context 'when API returns an error' do
         before :each do
-          stub_request(:post, "http://www.example.com/repositories/repo/items").
-            with(:body => "FILEDATA",
+          stub_request(:post, 'http://www.example.com/repositories/repo/items').
+            with(:body => 'FILEDATA',
                  :headers => {'Accept'=>'application/json', 'Content-Disposition'=>'attachment; filename="item.fmw"', 'Content-Type'=>'application/octet-stream', 'Detail'=>'low', 'Multipart'=>'true', 'Repository'=>'repo'}).
             to_return(:status => 409, :body => {'what'=>'test.fmw', 'reason' => 'exists', 'message' => "File 'test.fmw' already exists"}.to_json)
         end
@@ -193,12 +193,12 @@ describe provider_class do
     end
     describe 'is being destroyed' do
       before :each do
-        stub_request(:delete, "http://www.example.com/repositories/repo/items/item.fmw").
+        stub_request(:delete, 'http://www.example.com/repositories/repo/items/item.fmw').
           to_return(:status => 200)
       end
       it 'should have @property_hash cleared' do
         provider.destroy
-        expect(provider.instance_variable_get("@property_hash")).to be_empty
+        expect(provider.instance_variable_get('@property_hash')).to be_empty
       end
     end
     describe 'read_item_from_file' do
@@ -213,7 +213,7 @@ describe provider_class do
       describe '.services' do
         context 'when item has no services' do
           before :each do
-            stub_request(:get, "http://www.example.com/repositories/repo/items/item.fmw/services").
+            stub_request(:get, 'http://www.example.com/repositories/repo/items/item.fmw/services').
               with(:headers => { 'Accept'=>'application/json' } ).
               to_return(:status => 200, :body => [].to_json)
           end
@@ -224,7 +224,7 @@ describe provider_class do
 
         context 'when item has 2 services' do
           before :each do
-            stub_request(:get, "http://www.example.com/repositories/repo/items/item.fmw/services").
+            stub_request(:get, 'http://www.example.com/repositories/repo/items/item.fmw/services').
               with(:headers => { 'Accept'=>'application/json' } ).
               to_return(
                 :status => 200,
@@ -245,8 +245,8 @@ describe provider_class do
 
       describe '.services=' do
         it 'should process PUT responses with process_put_services_response' do
-          stub_request(:put, "http://www.example.com/repositories/repo/items/item.fmw/services").
-            with(:body => {"services"=>"service2"}).
+          stub_request(:put, 'http://www.example.com/repositories/repo/items/item.fmw/services').
+            with(:body => {'services'=>'service2'}).
             to_return(:status => 200,
                       :body => 'dummy_response')
             provider.expects(:process_put_services_response).with(['service1','service2'],'dummy_response')
@@ -308,7 +308,7 @@ describe provider_class do
       describe '.process_put_services_response_code_200' do
         it 'should populate @property_hash' do
           provider.process_put_services_response_code_200(['service1','service2'])
-          expect(provider.instance_variable_get("@property_hash")[:services]).to eq(['service1','service2'])
+          expect(provider.instance_variable_get('@property_hash')[:services]).to eq(['service1','service2'])
         end
       end
 
@@ -318,15 +318,15 @@ describe provider_class do
           response = [
             { 'reason' => 'missing', 'name' => 'foo', 'status' => 409},
             {
-              "entity" => { "displayName" => "Test Service 2", "name" => "service2" },
-              "name"   => "service2",
-              "status" => 200
+              'entity' => { 'displayName' => 'Test Service 2', 'name' => 'service2' },
+              'name'   => 'service2',
+              'status' => 200
             }
           ].to_json
           expect{ provider.process_put_services_response_code_207(services_being_inserted,response) }.
             to raise_error(Puppet::Error,
                            /The following services couldn't be added to repo\/item\.fmw: \["foo"\]/)
-          expect(provider.instance_variable_get("@property_hash")[:services]).to eq(['service2'])
+          expect(provider.instance_variable_get('@property_hash')[:services]).to eq(['service2'])
         end
       end
       describe '#checksum' do
@@ -336,7 +336,7 @@ describe provider_class do
             expected_checksum = Digest::SHA256.new
             expected_checksum << mock_data
 
-            stub_request(:get, "http://www.example.com/repositories/repo/items/item.fmw").
+            stub_request(:get, 'http://www.example.com/repositories/repo/items/item.fmw').
               to_return(:status => 200, :body => mock_data)
 
             checksum = provider.checksum

@@ -18,7 +18,7 @@ describe 'fme_resource' do
   describe 'files' do
     testfile = '/tmp/testfile'
     before :all do
-      create_remote_file(master, testfile, "Test file data")
+      create_remote_file(master, testfile, 'Test file data')
       apply_manifest("fme_resource { 'FME_SHAREDRESOURCE_DATA:/puppet_test_data/testfile': ensure => absent }", :catch_failures => true)
     end
     describe 'uploading new file' do
@@ -60,8 +60,8 @@ describe 'fme_resource' do
       context 'when files are same size' do
         it 'should not replace existing file' do
           # Same size, but different content
-          create_remote_file(master, '/tmp/file1', "Test file data1")
-          create_remote_file(master, '/tmp/file2', "Test file data2")
+          create_remote_file(master, '/tmp/file1', 'Test file data1')
+          create_remote_file(master, '/tmp/file2', 'Test file data2')
           pp = <<-EOS
           fme_resource { 'FME_SHAREDRESOURCE_DATA:/puppet_test_data/testfile':
             ensure => file,
@@ -81,8 +81,8 @@ describe 'fme_resource' do
       end
       context 'when files are different sizes' do
         it 'should replace file with new upload' do
-          create_remote_file(master, '/tmp/file1', "Test file data1")
-          create_remote_file(master, '/tmp/file2', "Bigger test file data2.")
+          create_remote_file(master, '/tmp/file1', 'Test file data1')
+          create_remote_file(master, '/tmp/file2', 'Bigger test file data2.')
           pp = <<-EOS
           fme_resource { 'FME_SHAREDRESOURCE_DATA:/puppet_test_data/testfile':
             ensure => file,
@@ -105,8 +105,8 @@ describe 'fme_resource' do
       context 'when checksum=false' do
         it 'should not replace existing file' do
           # Same size, but different content
-          create_remote_file(master, '/tmp/file1', "Test file data1")
-          create_remote_file(master, '/tmp/file2', "Test file data2")
+          create_remote_file(master, '/tmp/file1', 'Test file data1')
+          create_remote_file(master, '/tmp/file2', 'Test file data2')
           pp = <<-EOS
           fme_resource { 'FME_SHAREDRESOURCE_DATA:/puppet_test_data/testfile':
             ensure => file,
@@ -128,8 +128,8 @@ describe 'fme_resource' do
       context 'when checksum=true' do
         it 'should replace existing file' do
           # Same size, but different content
-          create_remote_file(master, '/tmp/file1', "Test file data1")
-          create_remote_file(master, '/tmp/file2', "Test file data2")
+          create_remote_file(master, '/tmp/file1', 'Test file data1')
+          create_remote_file(master, '/tmp/file2', 'Test file data2')
           pp = <<-EOS
           fme_resource { 'FME_SHAREDRESOURCE_DATA:/puppet_test_data/testfile':
             ensure => file,

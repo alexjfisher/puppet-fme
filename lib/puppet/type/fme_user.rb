@@ -1,5 +1,5 @@
 Puppet::Type.newtype(:fme_user) do
-  desc "Puppet type that manages FME users"
+  desc 'Puppet type that manages FME users'
 
   ensurable
 
@@ -8,22 +8,22 @@ Puppet::Type.newtype(:fme_user) do
   end
 
   newparam(:name, :namevar => true) do
-    desc "User Name"
+    desc 'User Name'
   end
 
   newproperty(:fullname) do
-    desc "User Full Name"
+    desc 'User Full Name'
   end
 
   newproperty(:roles, :array_matching => :all) do
-    desc "Roles"
+    desc 'Roles'
     def insync?(is)
       is.sort == should.sort
     end
     validate do |value|
-      raise ArgumentError, "Roles must be array of strings." unless value.is_a?(String)
-      raise ArgumentError, "Roles cannot include ','." if value.include?(",")
-      raise ArgumentError, "Roles cannot include ' '." if value.include?(" ")
+      raise ArgumentError, 'Roles must be array of strings.' unless value.is_a?(String)
+      raise ArgumentError, "Roles cannot include ','." if value.include?(',')
+      raise ArgumentError, "Roles cannot include ' '." if value.include?(' ')
     end
   end
 

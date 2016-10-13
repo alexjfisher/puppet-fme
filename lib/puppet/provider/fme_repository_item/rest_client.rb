@@ -60,7 +60,7 @@ Puppet::Type.type(:fme_repository_item).provide(:rest_client, :parent => Puppet:
   end
 
   def create
-    fail "source is required when creating new repository item" if resource[:source].nil?
+    fail 'source is required when creating new repository item' if resource[:source].nil?
     RestClient.post(create_url, read_item_from_file, get_post_params) do |response, request, result, &block|
       process_create_response(response)
     end
@@ -109,7 +109,7 @@ Puppet::Type.type(:fme_repository_item).provide(:rest_client, :parent => Puppet:
   end
 
   def destroy
-    Puppet.debug "Deleting repository_item"
+    Puppet.debug 'Deleting repository_item'
     RestClient.delete("#{@baseurl}/repositories/#{resource[:repository]}/items/#{resource[:item]}", :accept => :json)
     @property_hash.clear
   end

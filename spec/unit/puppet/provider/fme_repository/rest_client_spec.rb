@@ -30,7 +30,7 @@ describe provider_class do
         end
 
         it 'should return the resource "repo1"' do
-          expect(described_class.instances[0].instance_variable_get("@property_hash")).to eq( {
+          expect(described_class.instances[0].instance_variable_get('@property_hash')).to eq( {
             :ensure      => :present,
             :provider    => :rest_client,
             :name        => 'repo1',
@@ -53,7 +53,7 @@ describe provider_class do
         end
 
         it 'should return the resource "repo1"' do
-          expect(described_class.instances[0].instance_variable_get("@property_hash")).to eq( {
+          expect(described_class.instances[0].instance_variable_get('@property_hash')).to eq( {
             :ensure      => :present,
             :provider    => :rest_client,
             :name        => 'repo1',
@@ -62,7 +62,7 @@ describe provider_class do
         end
 
         it 'should return the resource "repo2"' do
-          expect(described_class.instances[1].instance_variable_get("@property_hash")).to eq( {
+          expect(described_class.instances[1].instance_variable_get('@property_hash')).to eq( {
             :ensure      => :present,
             :provider    => :rest_client,
             :name        => 'repo2',
@@ -112,13 +112,13 @@ describe provider_class do
       end
       context 'when API returns success' do
         before :each do
-          stub_request(:post, "http://www.example.com/repositories?description=a%20test%20repo&name=myrepo").
+          stub_request(:post, 'http://www.example.com/repositories?description=a%20test%20repo&name=myrepo').
             to_return(:status => 201, :body => {'name'=>'myrepo', 'description'=>'a test repo'}.to_json)
         end
         it 'should create a repository' do
           resource[:description] = 'a test repo'
           provider.create
-          expect(provider.instance_variable_get("@property_hash")).to eq( {
+          expect(provider.instance_variable_get('@property_hash')).to eq( {
             :ensure      => :present,
             :provider    => :rest_client,
             :name        => 'myrepo',
@@ -129,7 +129,7 @@ describe provider_class do
 
       context 'when API returns an error' do
         before :each do
-          stub_request(:post, "http://www.example.com/repositories?name=myrepo").
+          stub_request(:post, 'http://www.example.com/repositories?name=myrepo').
             to_return(:status => 401, :body => {'message'=>'Authentication failed: Failed to login'}.to_json)
         end
         it 'should raise an exception' do
@@ -140,12 +140,12 @@ describe provider_class do
 
     describe 'is being destroyed' do
       before :each do
-        stub_request(:delete, "http://www.example.com/repositories/myrepo").
+        stub_request(:delete, 'http://www.example.com/repositories/myrepo').
           to_return(:status => 200)
       end
       it 'should be deleted' do
         provider.destroy
-        expect(provider.instance_variable_get("@property_hash")).to eq( { :ensure => :absent } )
+        expect(provider.instance_variable_get('@property_hash')).to eq( { :ensure => :absent } )
       end
     end
 

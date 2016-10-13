@@ -20,7 +20,7 @@ describe Puppet::Type.type(:fme_resource) do
   end
 
   describe 'namevars' do
-    it "should have 3 namevars" do
+    it 'should have 3 namevars' do
       expect(described_class.key_attributes.size).to eq(3)
     end
     [ :name, :resource, :path ].each do |param|
@@ -56,7 +56,7 @@ describe Puppet::Type.type(:fme_resource) do
           expect(@resource[:ensure]).to eq(:file)
         end
       end
-      describe "#sync" do
+      describe '#sync' do
         context 'should = :file' do
           before :each do
             @property.should = :file
@@ -157,8 +157,8 @@ describe Puppet::Type.type(:fme_resource) do
         it 'returns true when checksum_of_source matches checksum returned by provider' do
           provider_checksum = Digest::SHA256.new
           source_checksum = Digest::SHA256.new
-          provider_checksum << "Matching DATA"
-          source_checksum << "Matching DATA"
+          provider_checksum << 'Matching DATA'
+          source_checksum << 'Matching DATA'
           @provider.expects(:checksum).returns provider_checksum
           @property.expects(:checksum_of_source).returns source_checksum
           expect(@property.checksums_match?).to eq true
@@ -166,7 +166,7 @@ describe Puppet::Type.type(:fme_resource) do
         it 'returns false when checksum_of_source does not match checksum returned by provider' do
           provider_checksum = Digest::SHA256.new
           source_checksum = Digest::SHA256.new
-          provider_checksum << "Non-Matching DATA"
+          provider_checksum << 'Non-Matching DATA'
           source_checksum << "DATA that doesn't match"
           @provider.expects(:checksum).returns provider_checksum
           @property.expects(:checksum_of_source).returns source_checksum
@@ -175,16 +175,16 @@ describe Puppet::Type.type(:fme_resource) do
       end
       describe '.change_to_s' do
         it 'returns "uploaded new file" when creating a new file' do
-          expect(@property.change_to_s(:absent,:file)).to eq "uploaded new file"
+          expect(@property.change_to_s(:absent,:file)).to eq 'uploaded new file'
         end
         it 'returns "created directory" when creating a new directory' do
-          expect(@property.change_to_s(:absent,:directory)).to eq "created directory"
+          expect(@property.change_to_s(:absent,:directory)).to eq 'created directory'
         end
         it 'returns "deleted file" when deleting a file' do
-          expect(@property.change_to_s(:file,:absent)).to eq "deleted file"
+          expect(@property.change_to_s(:file,:absent)).to eq 'deleted file'
         end
         it 'returns "deleted directory" when deleting a directory' do
-          expect(@property.change_to_s(:directory,:absent)).to eq "deleted directory"
+          expect(@property.change_to_s(:directory,:absent)).to eq 'deleted directory'
         end
         it 'returns "replaced file of size..." when replacing a file' do
           @property.expects(:size_of_source).returns 42
@@ -206,7 +206,7 @@ describe Puppet::Type.type(:fme_resource) do
           end
           #echo -n "DATA" | sha256sum -
           #c97c29c7a71b392b437ee03fd17f09bb10b75e879466fc0eb757b2c4a78ac938
-          expect(@property.checksum_of_source.hexdigest).to eq "c97c29c7a71b392b437ee03fd17f09bb10b75e879466fc0eb757b2c4a78ac938"
+          expect(@property.checksum_of_source.hexdigest).to eq 'c97c29c7a71b392b437ee03fd17f09bb10b75e879466fc0eb757b2c4a78ac938'
         end
       end
     end

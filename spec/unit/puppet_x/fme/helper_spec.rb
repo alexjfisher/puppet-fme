@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Fme::Helper do
-  describe ".get_url" do
+  describe '.get_url' do
     it 'should call read_settings' do
       Fme::Helper.expects(:read_settings).returns({'username' => 'user','password' => 'password'})
       expect(Fme::Helper.get_url)
@@ -52,8 +52,8 @@ describe Fme::Helper do
     end
   end
 
-  describe ".settings_file" do
-    context "on windows" do
+  describe '.settings_file' do
+    context 'on windows' do
       before :each do
         Facter.clear
         Facter.stubs(:fact).with(:kernel).returns Facter.add(:kernel) { setcode { 'windows' } }
@@ -62,7 +62,7 @@ describe Fme::Helper do
         expect(Fme::Helper.settings_file).to eq('C:/fme_api_settings.yaml')
       end
     end
-    context "on linux" do
+    context 'on linux' do
       before :each do
         Facter.clear
         Facter.stubs(:fact).with(:kernel).returns Facter.add(:kernel) { setcode { 'Linux' } }
@@ -73,7 +73,7 @@ describe Fme::Helper do
     end
   end
 
-  describe ".validate_settings" do
+  describe '.validate_settings' do
     context 'with no settings' do
       it 'should raise an exception' do
         expect { Fme::Helper.validate_settings(nil) }.to raise_error(Puppet::Error, /Can't find settings/)
@@ -91,7 +91,7 @@ describe Fme::Helper do
     end
   end
 
-  describe ".read_settings" do
+  describe '.read_settings' do
     context 'when settings file contains YAML' do
       before :each do
         File.stubs(:read).with('/path/to/settings').returns("---\nusername: user\npassword: password")
@@ -112,7 +112,7 @@ describe Fme::Helper do
     end
   end
 
-  describe ".response_to_property_hash" do
+  describe '.response_to_property_hash' do
     it 'parses JSON' do
       expect(Fme::Helper.response_to_property_hash('{"name": "testuser"}')).to include(:name => 'testuser')
     end

@@ -20,7 +20,7 @@ describe Puppet::Type.type(:fme_repository_item) do
   end
 
   describe 'namevars' do
-    it "should have 3 namevars" do
+    it 'should have 3 namevars' do
       expect(described_class.key_attributes.size).to eq(3)
     end
     [ :name, :repository, :item ].each do |param|
@@ -50,7 +50,7 @@ describe Puppet::Type.type(:fme_repository_item) do
       it 'should not support other values' do
         expect { described_class.new( {:title => 'repo/item.fmw',:ensure => 'foo'})}.to raise_error(Puppet::Error, /Invalid value/)
       end
-      describe "#sync" do
+      describe '#sync' do
         context 'should = :present' do
           before :each do
             @property.should = :present
@@ -127,26 +127,26 @@ describe Puppet::Type.type(:fme_repository_item) do
           end
           #echo -n "DATA" | sha256sum -
           #c97c29c7a71b392b437ee03fd17f09bb10b75e879466fc0eb757b2c4a78ac938
-          expect(@property.checksum_of_source.hexdigest).to eq "c97c29c7a71b392b437ee03fd17f09bb10b75e879466fc0eb757b2c4a78ac938"
+          expect(@property.checksum_of_source.hexdigest).to eq 'c97c29c7a71b392b437ee03fd17f09bb10b75e879466fc0eb757b2c4a78ac938'
         end
       end
     end
 
     describe 'name' do
-      context "when not set" do
+      context 'when not set' do
         it 'should be munged to <repository>/<item>' do
           expect { @item = described_class.new( {:title => 'resourcetitle', :repository => 'repo', :item => 'item.fmw', :source => '/path/to/item.fmw', :ensure => :present})}.to_not raise_error
           expect(@item[:name]).to eq('repo/item.fmw')
         end
       end
-      context "when set" do
-        context "to match <repository>/<item>" do
+      context 'when set' do
+        context 'to match <repository>/<item>' do
           it 'should be unaffected by munge' do
             expect { @item = described_class.new( {:title => 'resourcetitle', :name => 'repo/item.fmw', :repository => 'repo', :item => 'item.fmw', :source => '/path/to/item.fmw', :ensure => :present})}.to_not raise_error
             expect(@item[:name]).to eq('repo/item.fmw')
           end
         end
-        context "with mismatched repository or item" do
+        context 'with mismatched repository or item' do
           it 'should raise error' do
             expect { @item = described_class.new( {:title => 'resourcetitle', :name => 'repo2/item42.fmw', :repository => 'repo', :item => 'item.fmw', :source => '/path/to/item.fmw', :ensure => :present})}.to raise_error(Puppet::Error, /'name' should not be used/)
           end

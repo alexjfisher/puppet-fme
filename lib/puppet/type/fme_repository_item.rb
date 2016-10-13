@@ -1,5 +1,5 @@
 Puppet::Type.newtype(:fme_repository_item) do
-  desc "Puppet type that manages FME repository item"
+  desc 'Puppet type that manages FME repository item'
 
   ensurable do
     newvalue(:present) do
@@ -53,7 +53,7 @@ Puppet::Type.newtype(:fme_repository_item) do
       [
         /(.*)/, # Catch all workaround to avoid 'No set of title patterns matched the title'
         [
-          [:dummy, lambda{|x| ""} ]
+          [:dummy, lambda{|x| ''} ]
         ]
       ]
     ]
@@ -72,17 +72,17 @@ Puppet::Type.newtype(:fme_repository_item) do
   end
 
   newparam(:repository, :namevar => true) do
-    desc "Name of the repository containing the item"
+    desc 'Name of the repository containing the item'
   end
 
   newparam(:item, :namevar => true) do
-    desc "The name of the item"
+    desc 'The name of the item'
     newvalues(/[^\/]+\.(?:|fmw|fds|fmx|fmwt)/)
   end
 
   newparam(:name, :namevar => true) do
-    desc "The default namevar"
-    defaultto ""
+    desc 'The default namevar'
+    defaultto ''
     munge do |value|
       if value.empty? and resource[:repository] and resource[:item]
        "#{resource[:repository]}/#{resource[:item]}"
@@ -94,7 +94,7 @@ Puppet::Type.newtype(:fme_repository_item) do
   end
 
   newparam(:source) do
-    desc "The file to upload.  Must be the absolute path to a file."
+    desc 'The file to upload.  Must be the absolute path to a file.'
     validate do |value|
       fail "'source' file path must be fully qualified, not '#{value}'" unless Puppet::Util.absolute_path?(value)
     end
@@ -102,22 +102,22 @@ Puppet::Type.newtype(:fme_repository_item) do
 
   newproperty(:description) do
     desc "The item's description. Read-only"
-    validate { |val| fail "description is read-only" }
+    validate { |val| fail 'description is read-only' }
   end
 
   newproperty(:item_title) do
     desc "The item's title. Read-only"
-    validate { |val| fail "item_title is read-only" }
+    validate { |val| fail 'item_title is read-only' }
   end
 
   newproperty(:type) do
     desc "The item's type. Read-only"
-    validate { |val| fail "type is read-only" }
+    validate { |val| fail 'type is read-only' }
   end
 
   newproperty(:last_save_date) do
     desc "The item's lastSaveDate. Read-only"
-    validate { |val| fail "last_save_date is read-only" }
+    validate { |val| fail 'last_save_date is read-only' }
   end
 
   newproperty(:services, :array_matching => :all) do
@@ -126,9 +126,9 @@ Puppet::Type.newtype(:fme_repository_item) do
       is.sort == should.sort
     end
     validate do |value|
-      raise ArgumentError, "Services must be array of strings." unless value.is_a?(String)
-      raise ArgumentError, "Services cannot include ','." if value.include?(",")
-      raise ArgumentError, "Services cannot include ' '." if value.include?(" ")
+      raise ArgumentError, 'Services must be array of strings.' unless value.is_a?(String)
+      raise ArgumentError, "Services cannot include ','." if value.include?(',')
+      raise ArgumentError, "Services cannot include ' '." if value.include?(' ')
     end
   end
 end

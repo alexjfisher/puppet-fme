@@ -1,6 +1,6 @@
 require 'puppet/parameter/boolean'
 Puppet::Type.newtype(:fme_resource) do
-  desc "Puppet type to manage FME shared resources"
+  desc 'Puppet type to manage FME shared resources'
 
   def self.title_patterns
     identity = lambda {|x| x}
@@ -37,14 +37,14 @@ Puppet::Type.newtype(:fme_resource) do
         provider.destroy
         provider.upload_file
       elsif current == :directory
-        fail "Cannot replace a directory with a file!"
+        fail 'Cannot replace a directory with a file!'
       end
     end
 
     aliasvalue(:present, :file)
 
     newvalue(:directory) do
-      fail "Cannot replace a file with a directory!" if self.retrieve == :file
+      fail 'Cannot replace a file with a directory!' if self.retrieve == :file
       provider.create_directory
     end
 
@@ -75,10 +75,10 @@ Puppet::Type.newtype(:fme_resource) do
     end
 
     def change_to_s(currentvalue, newvalue)
-      return "uploaded new file" if new_file?(currentvalue, newvalue)
-      return "created directory" if new_directory?(currentvalue, newvalue)
-      return "deleted file"      if deleted_file?(currentvalue, newvalue)
-      return "deleted directory" if deleted_directory?(currentvalue, newvalue)
+      return 'uploaded new file' if new_file?(currentvalue, newvalue)
+      return 'created directory' if new_directory?(currentvalue, newvalue)
+      return 'deleted file'      if deleted_file?(currentvalue, newvalue)
+      return 'deleted directory' if deleted_directory?(currentvalue, newvalue)
       "replaced file of size #{@original_size} bytes with one of #{size_of_source} bytes"
     end
 
@@ -114,7 +114,7 @@ Puppet::Type.newtype(:fme_resource) do
   end
 
   newparam(:source) do
-    desc "The file to upload.  Must be the absolute path to a file."
+    desc 'The file to upload.  Must be the absolute path to a file.'
     validate do |value|
       fail "'source' file path must be absolute, not '#{value}'" unless Puppet::Util.absolute_path?(value)
     end
@@ -127,7 +127,7 @@ Puppet::Type.newtype(:fme_resource) do
   end
 
   newparam(:checksum, :boolean => true, :parent => Puppet::Parameter::Boolean) do
-    desc "Whether to fetch remote files and checksum them"
+    desc 'Whether to fetch remote files and checksum them'
     defaultto :false
   end
 
@@ -136,7 +136,7 @@ Puppet::Type.newtype(:fme_resource) do
   end
 
   newparam(:name) do
-    desc "The default namevar"
+    desc 'The default namevar'
     munge do |discard|
       shared_resource = @resource.original_parameters[:resource]
       path            = @resource.original_parameters[:path]

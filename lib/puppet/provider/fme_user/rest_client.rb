@@ -41,7 +41,7 @@ Puppet::Type.type(:fme_user).provide(:rest_client, :parent => Puppet::Provider::
 
   def create
     if resource[:password].nil?
-      raise Puppet::Error, "Sorry, password is mandatory when creating fme_users"
+      raise Puppet::Error, 'Sorry, password is mandatory when creating fme_users'
     end
     baseurl = Fme::Helper.get_url
     url = "#{baseurl}/security/accounts"
@@ -54,7 +54,7 @@ Puppet::Type.type(:fme_user).provide(:rest_client, :parent => Puppet::Provider::
       RestClient.delete("#{Fme::Helper.get_url}/security/accounts/#{resource[:name]}", :accept => :json)
       @property_hash[:ensure] = :absent
     else
-      raise Puppet::Error, "Sorry, password is mandatory when modifying fme_users" if resource[:password].nil?
+      raise Puppet::Error, 'Sorry, password is mandatory when modifying fme_users' if resource[:password].nil?
       modify_user
     end
   end

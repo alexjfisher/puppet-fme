@@ -1,5 +1,5 @@
 Puppet::Type.newtype(:fme_repository) do
-  desc "Puppet type that manages FME repositories"
+  desc 'Puppet type that manages FME repositories'
 
   ensurable
 
@@ -8,10 +8,10 @@ Puppet::Type.newtype(:fme_repository) do
   end
 
   newparam(:name, :namevar => true) do
-    desc "Name of the repository"
+    desc 'Name of the repository'
   end
 
   newproperty(:description) do
-    desc "Description of the repository"
+    desc 'Description of the repository'
   end
 end

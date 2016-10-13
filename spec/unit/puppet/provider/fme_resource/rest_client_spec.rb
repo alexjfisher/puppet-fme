@@ -9,7 +9,7 @@ describe provider_class do
   end
 
   let :resource do
-    Puppet::Type.type(:fme_resource).new(:title => "FME_SHAREDRESOURCE_DATA:/path/to/resource", :provider => :rest_client)
+    Puppet::Type.type(:fme_resource).new(:title => 'FME_SHAREDRESOURCE_DATA:/path/to/resource', :provider => :rest_client)
   end
 
   let :provider do
@@ -19,7 +19,7 @@ describe provider_class do
   describe '#get_file_metadata' do
     context 'when response code is 200' do
       before :each do
-        stub_request(:get, "http://www.example.com/resources/connections/FME_SHAREDRESOURCE_DATA/filesys//path/to/resource?depth=0&detail=low").
+        stub_request(:get, 'http://www.example.com/resources/connections/FME_SHAREDRESOURCE_DATA/filesys//path/to/resource?depth=0&detail=low').
           to_return(:status => 200, :body => {'a' => 1, 'b' => 2}.to_json)
       end
       it 'should call extract_metadata_from_response with hash parsed from json response' do
@@ -34,7 +34,7 @@ describe provider_class do
     end
     context 'when response code is 404' do
       before :each do
-        stub_request(:get, "http://www.example.com/resources/connections/FME_SHAREDRESOURCE_DATA/filesys//path/to/resource?depth=0&detail=low").
+        stub_request(:get, 'http://www.example.com/resources/connections/FME_SHAREDRESOURCE_DATA/filesys//path/to/resource?depth=0&detail=low').
           to_return(:status => 404)
       end
       it 'should return nil' do
@@ -43,7 +43,7 @@ describe provider_class do
     end
     context 'when response code is 403' do
       before :each do
-        stub_request(:get, "http://www.example.com/resources/connections/FME_SHAREDRESOURCE_DATA/filesys//path/to/resource?depth=0&detail=low").
+        stub_request(:get, 'http://www.example.com/resources/connections/FME_SHAREDRESOURCE_DATA/filesys//path/to/resource?depth=0&detail=low').
           to_return(:status => 403, :body => {'response' => 'hash'}.to_json)
       end
       it 'should raise exception' do
@@ -61,7 +61,7 @@ describe provider_class do
         expected_checksum = Digest::SHA256.new
         expected_checksum << mock_data
 
-        stub_request(:get, "http://www.example.com/resources/connections/FME_SHAREDRESOURCE_DATA/filesys/path/to/resource").
+        stub_request(:get, 'http://www.example.com/resources/connections/FME_SHAREDRESOURCE_DATA/filesys/path/to/resource').
           to_return(:status => 200, :body => mock_data)
 
         checksum = provider.checksum
@@ -70,7 +70,7 @@ describe provider_class do
     end
     context 'on API failure' do
       it 'should raise error' do
-        stub_request(:get, "http://www.example.com/resources/connections/FME_SHAREDRESOURCE_DATA/filesys/path/to/resource").
+        stub_request(:get, 'http://www.example.com/resources/connections/FME_SHAREDRESOURCE_DATA/filesys/path/to/resource').
           to_return(:status => 404)
         expect{provider.checksum}.
           to raise_error(Puppet::Error, /Error calculating checksum 404/)
@@ -137,16 +137,16 @@ describe provider_class do
       end
       context 'when successful' do
         it 'should not raise any error' do
-          stub_request(:post, "http://url/").
-            with(:body => "DATA", :headers => {'Post'=>'params'}).
-            to_return(:status => 201, :body => "")
+          stub_request(:post, 'http://url/').
+            with(:body => 'DATA', :headers => {'Post'=>'params'}).
+            to_return(:status => 201, :body => '')
           expect{provider.upload_file}.to_not raise_error
         end
       end
       context 'when unsuccessful' do
         it 'should raise error' do
-          stub_request(:post, "http://url/").
-            with(:body => "DATA", :headers => {'Post'=>'params'}).
+          stub_request(:post, 'http://url/').
+            with(:body => 'DATA', :headers => {'Post'=>'params'}).
             to_return(:status => 409, :body => '{"what": "/for/bar/upload", "reason": "exists", "message": "File \'upload\' already exists"}')
           expect{provider.upload_file}.to raise_error(Puppet::Error, /FME Rest API returned 409 when uploading FME_SHAREDRESOURCE_DATA:\/path\/to\/resource\. {"what"=>"\/for\/bar\/upload", "reason"=>"exists", "message"=>"File 'upload' already exists"/)
         end
@@ -159,16 +159,16 @@ describe provider_class do
     end
     context 'when successful' do
       it 'should not raise any error' do
-        stub_request(:post, "http://url/").
-          with(:body => "directoryname=resource&type=DIR").
+        stub_request(:post, 'http://url/').
+          with(:body => 'directoryname=resource&type=DIR').
           to_return(:status => 201)
         expect{provider.create_directory}.to_not raise_error
       end
     end
     context 'when unsuccessful' do
       it 'should raise error' do
-        stub_request(:post, "http://url/").
-          with(:body => "directoryname=resource&type=DIR").
+        stub_request(:post, 'http://url/').
+          with(:body => 'directoryname=resource&type=DIR').
           to_return(:status => 409, :body => '{"what": "/for/bar/testdir", "reason": "exists", "message": "Directory \'testdir\' already exists"}')
         expect{provider.create_directory}.to raise_error(Puppet::Error, /FME Rest API returned 409 when creating directory FME_SHAREDRESOURCE_DATA:\/path\/to\/resource\. {"what"=>"\/for\/bar\/testdir", "reason"=>"exists", "message"=>"Directory 'testdir' already exists"/)
       end
@@ -220,7 +220,7 @@ describe provider_class do
 
   describe '#destroy' do
     before :each do
-      stub_request(:delete, "http://www.example.com/resources/connections/FME_SHAREDRESOURCE_DATA/filesys//path/to/resource")
+      stub_request(:delete, 'http://www.example.com/resources/connections/FME_SHAREDRESOURCE_DATA/filesys//path/to/resource')
     end
     it 'should delete the resource' do
       provider.destroy

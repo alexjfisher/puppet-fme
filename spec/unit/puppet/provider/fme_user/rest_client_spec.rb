@@ -6,7 +6,7 @@ describe provider_class do
     Fme::Helper.stubs(:get_url).returns('www.example.com')
   end
   let :resource do
-    Puppet::Type.type(:fme_user).new(:name => "testuser", :provider => :rest_client)
+    Puppet::Type.type(:fme_user).new(:name => 'testuser', :provider => :rest_client)
   end
 
   let :provider do
@@ -39,7 +39,7 @@ describe provider_class do
         expect(described_class.instances.size).to eq(1)
       end
       it 'should return the resource "test"' do
-        expect(described_class.instances[0].instance_variable_get("@property_hash")).to eq( {
+        expect(described_class.instances[0].instance_variable_get('@property_hash')).to eq( {
           :ensure   => :present,
           :name     => 'test',
           :fullname => 'test user',
@@ -64,7 +64,7 @@ describe provider_class do
         expect(described_class.instances.size).to eq(2)
       end
       it 'should return the resource "test"' do
-        expect(described_class.instances[0].instance_variable_get("@property_hash")).to eq( {
+        expect(described_class.instances[0].instance_variable_get('@property_hash')).to eq( {
           :ensure   => :present,
           :name     => 'test',
           :fullname => 'test user',
@@ -73,7 +73,7 @@ describe provider_class do
         } )
       end
       it 'should return the resource "test2"' do
-        expect(described_class.instances[1].instance_variable_get("@property_hash")).to eq( {
+        expect(described_class.instances[1].instance_variable_get('@property_hash')).to eq( {
           :ensure   => :present,
           :name     => 'test2',
           :fullname => 'test user2',
@@ -92,19 +92,19 @@ describe provider_class do
   describe 'get_new_params' do
     it 'should return a URI encoded parameter string' do
       resource[:password] = 'password'
-      expect(provider.get_new_params).to eq("name=testuser&password=password")
+      expect(provider.get_new_params).to eq('name=testuser&password=password')
     end
     context 'when resource fullname is set to "Test User"' do
-      expected="name=testuser&fullName=Test+User"
+      expected='name=testuser&fullName=Test+User'
       it "should return #{expected}" do
         resource[:fullname] = 'Test User'
         expect(provider.get_new_params).to eq(expected)
       end
     end
     context 'when fullname exists in @property_hash' do
-      expected="name=testuser&fullName=Test+User+2"
+      expected='name=testuser&fullName=Test+User+2'
       it "should return #{expected}" do
-        provider.instance_variable_set(:@property_hash, { :fullname => "Test User 2" } )
+        provider.instance_variable_set(:@property_hash, { :fullname => 'Test User 2' } )
         expect(provider.get_new_params).to eq(expected)
       end
     end
@@ -113,14 +113,14 @@ describe provider_class do
   describe 'modify_user' do
     context 'when API returns response code 200' do
       before :each do
-        stub_request(:put, "http://www.example.com/security/accounts/testuser?detail=high&name=testuser").to_return(:status => 200, :body => '{"fullName": "test user","name": "testuser","roles": ["fmeuser"]}')
+        stub_request(:put, 'http://www.example.com/security/accounts/testuser?detail=high&name=testuser').to_return(:status => 200, :body => '{"fullName": "test user","name": "testuser","roles": ["fmeuser"]}')
       end
       it 'should call response_to_property_hash to populate @property_hash' do
         provider.modify_user
-        expect(provider.instance_variable_get("@property_hash")).to eq( {
+        expect(provider.instance_variable_get('@property_hash')).to eq( {
           :ensure   => :present,
-          :name     => "testuser",
-          :fullname => "test user",
+          :name     => 'testuser',
+          :fullname => 'test user',
           :roles    => ['fmeuser'],
           :provider => :rest_client
         } )
@@ -128,7 +128,7 @@ describe provider_class do
     end
     context 'when API returns response code 421' do
       before :each do
-        stub_request(:put, "http://www.example.com/security/accounts/testuser?detail=high&name=testuser").to_return(:status => 421, :body => '{"message": "An error message"}')
+        stub_request(:put, 'http://www.example.com/security/accounts/testuser?detail=high&name=testuser').to_return(:status => 421, :body => '{"message": "An error message"}')
       end
       it 'should raise a Puppet::Error with the API error message' do
         expect{ provider.modify_user }.to raise_error(Puppet::Error, /FME Rest API returned 421 when modifying testuser\. {"message"=>"An error message"}/)
@@ -151,7 +151,7 @@ describe provider_class do
       end
       context 'when password is set' do
         before :each do
-          stub_request(:post, "http://www.example.com/security/accounts?name=testuser")
+          stub_request(:post, 'http://www.example.com/security/accounts?name=testuser')
         end
         it 'should create user' do
           resource[:password] = 'password'
@@ -170,13 +170,13 @@ describe provider_class do
       end
       it 'should set its @property_flush :ensure value to :absent' do
         provider.destroy
-        expect(provider.instance_variable_get("@property_flush")).to eq( { :ensure => :absent } )
+        expect(provider.instance_variable_get('@property_flush')).to eq( { :ensure => :absent } )
       end
     end
     describe 'is being flushed' do
       context 'when being deleted' do
         before :each do
-          stub_request(:delete, "http://www.example.com/security/accounts/testuser")
+          stub_request(:delete, 'http://www.example.com/security/accounts/testuser')
           provider.instance_variable_set(:@property_flush, { :ensure => :absent } )
         end
         it 'should delete' do
@@ -201,9 +201,9 @@ describe provider_class do
   end
   describe 'when prefetching' do
     before :each do
-      @resource_foo = Puppet::Type.type(:fme_user).new(:name => "foo")
-      @resource_bar = Puppet::Type.type(:fme_user).new(:name => "bar")
-      @resources = { "foo" => @resource_foo, "bar" => @resource_bar}
+      @resource_foo = Puppet::Type.type(:fme_user).new(:name => 'foo')
+      @resource_bar = Puppet::Type.type(:fme_user).new(:name => 'bar')
+      @resources = { 'foo' => @resource_foo, 'bar' => @resource_bar}
     end
     context 'when .instances returns some of the resources' do
       before :each do
