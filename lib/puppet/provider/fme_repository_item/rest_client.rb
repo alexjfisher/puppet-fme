@@ -152,7 +152,7 @@ Puppet::Type.type(:fme_repository_item).provide(:rest_client, :parent => Puppet:
   def process_put_services_response_code_207(services, response)
     # "The response body contains information about the result of the registration operation, indicating success or error status for each service"
     @property_hash[:services] = JSON.parse(response).map { |service| service['name'] if service['status'] == 200 }.compact
-    raise Puppet::Error, "The following services couldn't be added to #{resource[:name]}: #{services-@property_hash[:services]}"
+    raise Puppet::Error, "The following services couldn't be added to #{resource[:name]}: #{services - @property_hash[:services]}"
   end
 
   def checksum

@@ -95,14 +95,14 @@ describe provider_class do
       expect(provider.get_new_params).to eq('name=testuser&password=password')
     end
     context 'when resource fullname is set to "Test User"' do
-      expected='name=testuser&fullName=Test+User'
+      expected = 'name=testuser&fullName=Test+User'
       it "should return #{expected}" do
         resource[:fullname] = 'Test User'
         expect(provider.get_new_params).to eq(expected)
       end
     end
     context 'when fullname exists in @property_hash' do
-      expected='name=testuser&fullName=Test+User+2'
+      expected = 'name=testuser&fullName=Test+User+2'
       it "should return #{expected}" do
         provider.instance_variable_set(:@property_hash, { :fullname => 'Test User 2' })
         expect(provider.get_new_params).to eq(expected)

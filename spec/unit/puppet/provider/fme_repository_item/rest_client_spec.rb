@@ -24,7 +24,7 @@ describe provider_class do
       context 'when there is 1 repository with no items' do
         before :each do
           stub_request(:get, 'http://www.example.com/repositories?detail=high').
-            to_return(:body => [{ 'name'=>'repo1', 'description'=>'empty repo' }].to_json)
+            to_return(:body => [{ 'name' => 'repo1', 'description' => 'empty repo' }].to_json)
           stub_request(:get, 'http://www.example.com/repositories/repo1/items?detail=high').to_return(:body => [].to_json)
         end
         it 'should return no resources' do
@@ -36,20 +36,20 @@ describe provider_class do
           stub_request(:get, 'http://www.example.com/repositories?detail=high').
             to_return(:body =>
                       [
-                        { 'name'=>'repo1', 'description'=>'test repo1' },
-                        { 'name'=>'repo2', 'description'=>'test repo2' }
+                        { 'name' => 'repo1', 'description' => 'test repo1' },
+                        { 'name' => 'repo2', 'description' => 'test repo2' }
                       ].to_json)
             stub_request(:get, 'http://www.example.com/repositories/repo1/items?detail=high').
               to_return(:body =>
                         [
-                          { 'name'=>'item1.fmw', 'description' => 'item1 description', 'title' => 'title1', 'type' => 'WORKSPACE', 'lastSaveDate' => '2014-12-11T11:36:12' },
-                          { 'name'=>'item2.fmw', 'description' => 'item2 description', 'title' => 'title2', 'type' => 'WORKSPACE', 'lastSaveDate' => '2014-12-11T11:36:13' }
+                          { 'name' => 'item1.fmw', 'description' => 'item1 description', 'title' => 'title1', 'type' => 'WORKSPACE', 'lastSaveDate' => '2014-12-11T11:36:12' },
+                          { 'name' => 'item2.fmw', 'description' => 'item2 description', 'title' => 'title2', 'type' => 'WORKSPACE', 'lastSaveDate' => '2014-12-11T11:36:13' }
                         ].to_json)
               stub_request(:get, 'http://www.example.com/repositories/repo2/items?detail=high').
                 to_return(:body =>
                           [
-                            { 'name'=>'item3.fmw', 'description' => 'item3 description', 'title' => 'title3', 'type' => 'WORKSPACE', 'lastSaveDate' => '2014-12-11T11:36:14' },
-                            { 'name'=>'item4.fmw', 'description' => 'item4 description', 'title' => 'title4', 'type' => 'WORKSPACE', 'lastSaveDate' => '2014-12-11T11:36:15' }
+                            { 'name' => 'item3.fmw', 'description' => 'item3 description', 'title' => 'title3', 'type' => 'WORKSPACE', 'lastSaveDate' => '2014-12-11T11:36:14' },
+                            { 'name' => 'item4.fmw', 'description' => 'item4 description', 'title' => 'title4', 'type' => 'WORKSPACE', 'lastSaveDate' => '2014-12-11T11:36:15' }
                           ].to_json)
         end
 
@@ -161,8 +161,8 @@ describe provider_class do
         before :each do
           stub_request(:post, 'http://www.example.com/repositories/repo/items').
             with(:body => 'FILEDATA',
-                 :headers => { 'Accept'=>'application/json', 'Content-Disposition'=>'attachment; filename="item.fmw"', 'Content-Type'=>'application/octet-stream', 'Detail'=>'low', 'Multipart'=>'true', 'Repository'=>'repo' }).
-            to_return(:status => 201, :body => { 'name'=>'test.fmw', 'description' => 'a description', 'title' => 'a title', 'type' => 'WORKSPACE', 'lastSaveDate' => '2014-12-11T11:32:50' }.to_json)
+                 :headers => { 'Accept' => 'application/json', 'Content-Disposition' => 'attachment; filename="item.fmw"', 'Content-Type' => 'application/octet-stream', 'Detail' => 'low', 'Multipart' => 'true', 'Repository' => 'repo' }).
+            to_return(:status => 201, :body => { 'name' => 'test.fmw', 'description' => 'a description', 'title' => 'a title', 'type' => 'WORKSPACE', 'lastSaveDate' => '2014-12-11T11:32:50' }.to_json)
         end
         it 'should create a repository_item' do
           provider.create
@@ -183,8 +183,8 @@ describe provider_class do
         before :each do
           stub_request(:post, 'http://www.example.com/repositories/repo/items').
             with(:body => 'FILEDATA',
-                 :headers => { 'Accept'=>'application/json', 'Content-Disposition'=>'attachment; filename="item.fmw"', 'Content-Type'=>'application/octet-stream', 'Detail'=>'low', 'Multipart'=>'true', 'Repository'=>'repo' }).
-            to_return(:status => 409, :body => { 'what'=>'test.fmw', 'reason' => 'exists', 'message' => "File 'test.fmw' already exists" }.to_json)
+                 :headers => { 'Accept' => 'application/json', 'Content-Disposition' => 'attachment; filename="item.fmw"', 'Content-Type' => 'application/octet-stream', 'Detail' => 'low', 'Multipart' => 'true', 'Repository' => 'repo' }).
+            to_return(:status => 409, :body => { 'what' => 'test.fmw', 'reason' => 'exists', 'message' => "File 'test.fmw' already exists" }.to_json)
         end
         it 'should raise an exception' do
           expect { provider.create }.to raise_error(Puppet::Error, /FME Rest API returned 409 when creating repo\/item\.fmw/)
@@ -214,7 +214,7 @@ describe provider_class do
         context 'when item has no services' do
           before :each do
             stub_request(:get, 'http://www.example.com/repositories/repo/items/item.fmw/services').
-              with(:headers => { 'Accept'=>'application/json' }).
+              with(:headers => { 'Accept' => 'application/json' }).
               to_return(:status => 200, :body => [].to_json)
           end
           it 'should return names of the services' do
@@ -225,7 +225,7 @@ describe provider_class do
         context 'when item has 2 services' do
           before :each do
             stub_request(:get, 'http://www.example.com/repositories/repo/items/item.fmw/services').
-              with(:headers => { 'Accept'=>'application/json' }).
+              with(:headers => { 'Accept' => 'application/json' }).
               to_return(
                 :status => 200,
                 :body   => [
@@ -246,7 +246,7 @@ describe provider_class do
       describe '.services=' do
         it 'should process PUT responses with process_put_services_response' do
           stub_request(:put, 'http://www.example.com/repositories/repo/items/item.fmw/services').
-            with(:body => { 'services'=>'service2' }).
+            with(:body => { 'services' => 'service2' }).
             to_return(:status => 200,
                       :body => 'dummy_response')
             provider.expects(:process_put_services_response).with(['service1', 'service2'], 'dummy_response')

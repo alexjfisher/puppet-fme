@@ -138,7 +138,7 @@ describe provider_class do
       context 'when successful' do
         it 'should not raise any error' do
           stub_request(:post, 'http://url/').
-            with(:body => 'DATA', :headers => { 'Post'=>'params' }).
+            with(:body => 'DATA', :headers => { 'Post' => 'params' }).
             to_return(:status => 201, :body => '')
           expect { provider.upload_file }.to_not raise_error
         end
@@ -146,7 +146,7 @@ describe provider_class do
       context 'when unsuccessful' do
         it 'should raise error' do
           stub_request(:post, 'http://url/').
-            with(:body => 'DATA', :headers => { 'Post'=>'params' }).
+            with(:body => 'DATA', :headers => { 'Post' => 'params' }).
             to_return(:status => 409, :body => '{"what": "/for/bar/upload", "reason": "exists", "message": "File \'upload\' already exists"}')
           expect { provider.upload_file }.to raise_error(Puppet::Error, /FME Rest API returned 409 when uploading FME_SHAREDRESOURCE_DATA:\/path\/to\/resource\. {"what"=>"\/for\/bar\/upload", "reason"=>"exists", "message"=>"File 'upload' already exists"/)
         end

@@ -23,7 +23,7 @@ describe provider_class do
       context 'when there is 1 repository' do
         before :each do
           stub_request(:get, 'http://www.example.com/repositories?detail=high').
-            to_return(:body => [{ 'name'=>'repo1', 'description'=>'Test repo 1' }].to_json)
+            to_return(:body => [{ 'name' => 'repo1', 'description' => 'Test repo 1' }].to_json)
         end
         it 'should return 1 resource' do
           expect(described_class.instances.size).to eq(1)
@@ -44,8 +44,8 @@ describe provider_class do
           stub_request(:get, 'http://www.example.com/repositories?detail=high').
             to_return(:body =>
                       [
-                        { 'name'=>'repo1', 'description'=>'Test repo 1' },
-                        { 'name'=>'repo2', 'description'=>'Test repo 2' }
+                        { 'name' => 'repo1', 'description' => 'Test repo 1' },
+                        { 'name' => 'repo2', 'description' => 'Test repo 2' }
                       ].to_json)
         end
         it 'should return 2 resources' do
@@ -113,7 +113,7 @@ describe provider_class do
       context 'when API returns success' do
         before :each do
           stub_request(:post, 'http://www.example.com/repositories?description=a%20test%20repo&name=myrepo').
-            to_return(:status => 201, :body => { 'name'=>'myrepo', 'description'=>'a test repo' }.to_json)
+            to_return(:status => 201, :body => { 'name' => 'myrepo', 'description' => 'a test repo' }.to_json)
         end
         it 'should create a repository' do
           resource[:description] = 'a test repo'
@@ -130,7 +130,7 @@ describe provider_class do
       context 'when API returns an error' do
         before :each do
           stub_request(:post, 'http://www.example.com/repositories?name=myrepo').
-            to_return(:status => 401, :body => { 'message'=>'Authentication failed: Failed to login' }.to_json)
+            to_return(:status => 401, :body => { 'message' => 'Authentication failed: Failed to login' }.to_json)
         end
         it 'should raise an exception' do
           expect { provider.create }.to raise_error(Puppet::Error, /FME Rest API returned 401 when creating myrepo/)
