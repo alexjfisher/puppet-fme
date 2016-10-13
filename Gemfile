@@ -33,7 +33,7 @@ group :test do
   else
     gem 'json'
     gem 'tins'
-    gem 'rubocop', '0.43.0'
+    gem 'rubocop', '0.44.1'
   end
 end
 
