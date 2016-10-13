@@ -17,7 +17,7 @@ Puppet::Type.type(:fme_user).provide(:rest_client, :parent => Puppet::Provider::
   def self.instances
     baseurl = Fme::Helper.get_url
     url = "#{baseurl}/security/accounts"
-    response = RestClient.get(url, {:params => {'detail' => 'high'}, :accept => :json})
+    response = RestClient.get(url, { :params => { 'detail' => 'high' }, :accept => :json })
     users = JSON.parse(response)
     users.collect do |user|
       user_properties = {}

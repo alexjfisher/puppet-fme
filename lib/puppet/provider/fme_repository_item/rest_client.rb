@@ -22,7 +22,7 @@ Puppet::Type.type(:fme_repository_item).provide(:rest_client, :parent => Puppet:
 
   def self.get_repos
     url = "#{Fme::Helper.get_url}/repositories"
-    response = RestClient.get(url, {:params => {'detail' => 'high'}, :accept => :json})
+    response = RestClient.get(url, { :params => { 'detail' => 'high' }, :accept => :json })
     repos = JSON.parse(response)
     repos_array = []
     repos.each do |repo|
@@ -33,7 +33,7 @@ Puppet::Type.type(:fme_repository_item).provide(:rest_client, :parent => Puppet:
 
   def self.get_items_from_repo(repo)
     url = "#{Fme::Helper.get_url}/repositories/#{repo}/items"
-    response = RestClient.get(url, {:params => {'detail' => 'high'}, :accept => :json})
+    response = RestClient.get(url, { :params => { 'detail' => 'high' }, :accept => :json })
     items = JSON.parse(response)
     items.collect do |item|
       item_properties = { :ensure         => :present,

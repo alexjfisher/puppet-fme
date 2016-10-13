@@ -203,7 +203,7 @@ describe provider_class do
     before :each do
       @resource_foo = Puppet::Type.type(:fme_user).new(:name => 'foo')
       @resource_bar = Puppet::Type.type(:fme_user).new(:name => 'bar')
-      @resources = { 'foo' => @resource_foo, 'bar' => @resource_bar}
+      @resources = { 'foo' => @resource_foo, 'bar' => @resource_bar }
     end
     context 'when .instances returns some of the resources' do
       before :each do

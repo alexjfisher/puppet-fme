@@ -21,7 +21,7 @@ Puppet::Type.type(:fme_repository).provide(:rest_client, :parent => Puppet::Prov
 
   def self.instances
     url = "#{Fme::Helper.get_url}/repositories"
-    response = RestClient.get(url, {:params => {'detail' => 'high'}, :accept => :json})
+    response = RestClient.get(url, { :params => { 'detail' => 'high' }, :accept => :json })
     repos = JSON.parse(response)
     repos.collect do |repo|
       repo_properties = {}

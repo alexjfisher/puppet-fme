@@ -20,7 +20,7 @@ Puppet::Type.type(:fme_resource).provide(:rest_client) do
 
   def get_file_metadata(resource,path)
     url = "#{@baseurl}/resources/connections/#{resource}/filesys/#{path}"
-    RestClient.get(url, {:params => {'detail' => 'low', :depth => 0}, :accept => :json}) do |response, request, result, &block|
+    RestClient.get(url, { :params => { 'detail' => 'low', :depth => 0 }, :accept => :json }) do |response, request, result, &block|
       case response.code
       when 200
         extract_metadata_from_response(JSON.parse(response))
@@ -110,7 +110,7 @@ Puppet::Type.type(:fme_resource).provide(:rest_client) do
   end
 
   def properties
-    @property_hash = get_file_metadata(resource[:resource], resource[:path]) || {:ensure => :absent} if @property_hash.empty?
+    @property_hash = get_file_metadata(resource[:resource], resource[:path]) || { :ensure => :absent } if @property_hash.empty?
     @property_hash.dup
   end
 end
