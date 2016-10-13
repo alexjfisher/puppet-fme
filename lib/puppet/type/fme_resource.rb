@@ -132,7 +132,7 @@ Puppet::Type.newtype(:fme_resource) do
   end
 
   newparam(:resource, :namevar => true) do
-    #TODO Rename this to something less confusing??
+    # TODO Rename this to something less confusing??
   end
 
   newparam(:name) do
