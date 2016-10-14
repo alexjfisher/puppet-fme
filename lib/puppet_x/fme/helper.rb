@@ -28,7 +28,7 @@ module Fme
     def self.read_settings
       begin
         settings = YAML.load(File.read(settings_file))
-      rescue Exception => e
+      rescue ScriptError, RuntimeError => e
         raise Puppet::Error, "Error when reading FME API settings file: #{e}"
       end
       validate_settings(settings)
