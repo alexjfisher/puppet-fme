@@ -19,9 +19,9 @@ module Fme
     def self.settings_file
       case Facter.value(:kernel)
       when 'Linux'
-        return '/etc/fme_api_settings.yaml'
+        '/etc/fme_api_settings.yaml'
       when 'windows'
-        return 'C:/fme_api_settings.yaml'
+        'C:/fme_api_settings.yaml'
       end
     end
 
