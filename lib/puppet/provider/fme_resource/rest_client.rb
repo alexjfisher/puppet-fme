@@ -73,7 +73,7 @@ Puppet::Type.type(:fme_resource).provide(:rest_client) do
     request_body
   end
 
-  def has_source?
+  def source?
     return false if resource[:source].nil?
     true
   end
@@ -84,7 +84,7 @@ Puppet::Type.type(:fme_resource).provide(:rest_client) do
   end
 
   def validate_source
-    raise Puppet::Error, 'source is required when creating new resource file' unless has_source?
+    raise Puppet::Error, 'source is required when creating new resource file' unless source?
   end
 
   def get_post_url

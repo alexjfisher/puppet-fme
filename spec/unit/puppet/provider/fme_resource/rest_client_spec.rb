@@ -175,16 +175,16 @@ describe provider_class do
     end
   end
 
-  describe '#has_source?' do
+  describe '#source?' do
     context 'when source parameter has been specified' do
       it 'should return true' do
         resource[:source] = '/path/to/file'
-        expect(provider.has_source?).to eq true
+        expect(provider.source?).to eq true
       end
     end
     context 'when no source parameter' do
       it 'should return false' do
-        expect(provider.has_source?).to eq false
+        expect(provider.source?).to eq false
       end
     end
   end
@@ -204,15 +204,15 @@ describe provider_class do
   end
 
   describe '#validate_source' do
-    context 'when has_source?' do
+    context 'when source?' do
       it 'should do nothing' do
-        provider.expects(:has_source?).returns(true)
+        provider.expects(:source?).returns(true)
         expect { provider.validate_source }.to_not raise_error
       end
     end
-    context 'when has_source? is false' do
+    context 'when source? is false' do
       it 'should raise an exception' do
-        provider.expects(:has_source?).returns(false)
+        provider.expects(:source?).returns(false)
         expect { provider.validate_source }.to raise_error(Puppet::Error, %r{source is required when creating new resource file})
       end
     end
