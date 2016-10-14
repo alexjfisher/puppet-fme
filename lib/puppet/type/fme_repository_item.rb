@@ -1,5 +1,5 @@
 Puppet::Type.newtype(:fme_repository_item) do
-  desc "Puppet type that manages FME repository item"
+  desc 'Puppet type that manages FME repository item'
 
   ensurable do
     newvalue(:present) do
@@ -14,7 +14,7 @@ Puppet::Type.newtype(:fme_repository_item) do
     defaultto(:present)
 
     def insync?(is)
-      return false if is == :present and !items_match?
+      return false if is == :present && !items_match?
       super
     end
 
@@ -44,80 +44,80 @@ Puppet::Type.newtype(:fme_repository_item) do
   def self.title_patterns
     [
       [
-        /^(.*)\/(.*)$/, # pattern to parse <repository>/<item>
+        %r{^(.*)/(.*)$}, # pattern to parse <repository>/<item>
         [
-          [:repository, lambda{|x| x} ],
-          [:item,       lambda{|x| x} ]
+          [:repository, ->(x) { x }],
+          [:item,       ->(x) { x }]
         ]
       ],
       [
-        /(.*)/, # Catch all workaround to avoid 'No set of title patterns matched the title'
+        %r{(.*)}, # Catch all workaround to avoid 'No set of title patterns matched the title'
         [
-          [:dummy, lambda{|x| ""} ]
+          [:dummy, ->(_x) { '' }]
         ]
       ]
     ]
   end
 
   validate do
-    fail "'name' should not be used" unless @original_parameters[:name].nil? or @original_parameters[:name] == "#{@original_parameters[:repository]}/#{@original_parameters[:item]}"
-    if match = @title.match(/^(.*)\/(.*)$/) # rubocop:disable Lint/AssignmentInCondition
-      fail "'repository' parameter #{self[:repository]} must match resource title #{@title} or be omitted" unless match.captures[0] == self[:repository]
-      fail "'item' parameter #{self[:item]} must match resource title #{@title} or be omitted" unless match.captures[1] == self[:item]
+    raise Puppet::Error, "'name' should not be used" unless @original_parameters[:name].nil? || @original_parameters[:name] == "#{@original_parameters[:repository]}/#{@original_parameters[:item]}"
+    if match = @title.match(%r{^(.*)/(.*)$}) # rubocop:disable Lint/AssignmentInCondition
+      raise Puppet::Error, "'repository' parameter #{self[:repository]} must match resource title #{@title} or be omitted" unless match.captures[0] == self[:repository]
+      raise Puppet::Error, "'item' parameter #{self[:item]} must match resource title #{@title} or be omitted" unless match.captures[1] == self[:item]
     end
   end
 
   newparam(:dummy) do
-    validate { |value| fail "dummy parameter shouldn't be used" unless value.empty? }
+    validate { |value| raise Puppet::Error, "dummy parameter shouldn't be used" unless value.empty? }
   end
 
   newparam(:repository, :namevar => true) do
-    desc "Name of the repository containing the item"
+    desc 'Name of the repository containing the item'
   end
 
   newparam(:item, :namevar => true) do
-    desc "The name of the item"
-    newvalues(/[^\/]+\.(?:|fmw|fds|fmx|fmwt)/)
+    desc 'The name of the item'
+    newvalues(%r{[^/]+\.(?:|fmw|fds|fmx|fmwt)})
   end
 
   newparam(:name, :namevar => true) do
-    desc "The default namevar"
-    defaultto ""
+    desc 'The default namevar'
+    defaultto ''
     munge do |value|
-      if value.empty? and resource[:repository] and resource[:item]
-       "#{resource[:repository]}/#{resource[:item]}"
+      if value.empty? && resource[:repository] && resource[:item]
+        "#{resource[:repository]}/#{resource[:item]}"
       else
-        fail "Use resource name style <repository>/<item> OR specify both 'repository' and 'item'" unless value =~ /^(.*)\/(.*)$/
+        raise Puppet::Error, "Use resource name style <repository>/<item> OR specify both 'repository' and 'item'" unless value =~ %r{^(.*)/(.*)$}
         value
       end
     end
   end
 
   newparam(:source) do
-    desc "The file to upload.  Must be the absolute path to a file."
+    desc 'The file to upload.  Must be the absolute path to a file.'
     validate do |value|
-      fail "'source' file path must be fully qualified, not '#{value}'" unless Puppet::Util.absolute_path?(value)
+      raise Puppet::Error, "'source' file path must be fully qualified, not '#{value}'" unless Puppet::Util.absolute_path?(value)
     end
   end
 
   newproperty(:description) do
     desc "The item's description. Read-only"
-    validate { |val| fail "description is read-only" }
+    validate { |_val| raise Puppet::Error, 'description is read-only' }
   end
 
   newproperty(:item_title) do
     desc "The item's title. Read-only"
-    validate { |val| fail "item_title is read-only" }
+    validate { |_val| raise Puppet::Error, 'item_title is read-only' }
   end
 
   newproperty(:type) do
     desc "The item's type. Read-only"
-    validate { |val| fail "type is read-only" }
+    validate { |_val| raise Puppet::Error, 'type is read-only' }
   end
 
   newproperty(:last_save_date) do
     desc "The item's lastSaveDate. Read-only"
-    validate { |val| fail "last_save_date is read-only" }
+    validate { |_val| raise Puppet::Error, 'last_save_date is read-only' }
   end
 
   newproperty(:services, :array_matching => :all) do
@@ -126,9 +126,9 @@ Puppet::Type.newtype(:fme_repository_item) do
       is.sort == should.sort
     end
     validate do |value|
-      raise ArgumentError, "Services must be array of strings." unless value.is_a?(String)
-      raise ArgumentError, "Services cannot include ','." if value.include?(",")
-      raise ArgumentError, "Services cannot include ' '." if value.include?(" ")
+      raise ArgumentError, 'Services must be array of strings.' unless value.is_a?(String)
+      raise ArgumentError, "Services cannot include ','." if value.include?(',')
+      raise ArgumentError, "Services cannot include ' '." if value.include?(' ')
     end
   end
 end

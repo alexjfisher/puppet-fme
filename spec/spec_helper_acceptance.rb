@@ -16,7 +16,7 @@ RSpec.configure do |c|
     puppet_module_install(:source => module_root, :module_name => 'fme')
     hosts.each do |host|
       on host, puppet('apply -e "package { \'git\': ensure => installed }"')
-      BeakerSpecHelper::spec_prep(host)
+      BeakerSpecHelper.spec_prep(host)
     end
   end
 end

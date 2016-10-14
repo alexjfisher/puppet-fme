@@ -19,16 +19,16 @@ module Fme
     def self.settings_file
       case Facter.value(:kernel)
       when 'Linux'
-        return '/etc/fme_api_settings.yaml'
+        '/etc/fme_api_settings.yaml'
       when 'windows'
-        return 'C:/fme_api_settings.yaml'
+        'C:/fme_api_settings.yaml'
       end
     end
 
     def self.read_settings
       begin
         settings = YAML.load(File.read(settings_file))
-      rescue Exception => e
+      rescue ScriptError, RuntimeError => e
         raise Puppet::Error, "Error when reading FME API settings file: #{e}"
       end
       validate_settings(settings)
@@ -42,7 +42,9 @@ module Fme
     end
 
     def self.response_to_property_hash(response)
-      JSON.parse(response).merge!( { :ensure => :present, :provider => :rest_client } ).inject({}){|memo,(k,v)| memo[k.downcase.to_sym] = v; memo}
+      JSON.parse(response).merge!(:ensure => :present, :provider => :rest_client).each_with_object({}) do |(k, v), memo|
+        memo[k.downcase.to_sym] = v
+      end
     end
   end
 end

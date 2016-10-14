@@ -15,14 +15,14 @@ Puppet::Type.type(:fme_repository_item).provide(:rest_client, :parent => Puppet:
 
   mk_resource_methods
 
-  def initialize(value={})
+  def initialize(value = {})
     super(value)
     @baseurl = Fme::Helper.get_url
   end
 
   def self.get_repos
     url = "#{Fme::Helper.get_url}/repositories"
-    response = RestClient.get(url, {:params => {'detail' => 'high'}, :accept => :json})
+    response = RestClient.get(url, :params => { 'detail' => 'high' }, :accept => :json)
     repos = JSON.parse(response)
     repos_array = []
     repos.each do |repo|
@@ -33,9 +33,9 @@ Puppet::Type.type(:fme_repository_item).provide(:rest_client, :parent => Puppet:
 
   def self.get_items_from_repo(repo)
     url = "#{Fme::Helper.get_url}/repositories/#{repo}/items"
-    response = RestClient.get(url, {:params => {'detail' => 'high'}, :accept => :json})
+    response = RestClient.get(url, :params => { 'detail' => 'high' }, :accept => :json)
     items = JSON.parse(response)
-    items.collect do |item|
+    items.map do |item|
       item_properties = { :ensure         => :present,
                           :provider       => :rest_client,
                           :item           => item['name'],
@@ -60,8 +60,8 @@ Puppet::Type.type(:fme_repository_item).provide(:rest_client, :parent => Puppet:
   end
 
   def create
-    fail "source is required when creating new repository item" if resource[:source].nil?
-    RestClient.post(create_url, read_item_from_file, get_post_params) do |response, request, result, &block|
+    raise 'source is required when creating new repository item' if resource[:source].nil?
+    RestClient.post(create_url, read_item_from_file, get_post_params) do |response, _request, _result|
       process_create_response(response)
     end
   end
@@ -109,7 +109,7 @@ Puppet::Type.type(:fme_repository_item).provide(:rest_client, :parent => Puppet:
   end
 
   def destroy
-    Puppet.debug "Deleting repository_item"
+    Puppet.debug 'Deleting repository_item'
     RestClient.delete("#{@baseurl}/repositories/#{resource[:repository]}/items/#{resource[:item]}", :accept => :json)
     @property_hash.clear
   end
@@ -117,12 +117,12 @@ Puppet::Type.type(:fme_repository_item).provide(:rest_client, :parent => Puppet:
   def services
     response = RestClient.get(item_services_url, :accept => :json)
     services = JSON.parse(response)
-    services.map{|x| x['name']}
+    services.map { |x| x['name'] }
   end
 
   def services=(services)
-    RestClient.put(item_services_url, services_body(services), :accept => :json, :content_type => 'application/x-www-form-urlencoded') do |response, request, result, &block|
-      process_put_services_response(services,response)
+    RestClient.put(item_services_url, services_body(services), :accept => :json, :content_type => 'application/x-www-form-urlencoded') do |response, _request, _result|
+      process_put_services_response(services, response)
     end
   end
 
@@ -131,15 +131,15 @@ Puppet::Type.type(:fme_repository_item).provide(:rest_client, :parent => Puppet:
   end
 
   def services_body(services)
-    URI.encode_www_form( :services => services )
+    URI.encode_www_form(:services => services)
   end
 
-  def process_put_services_response(services,response)
+  def process_put_services_response(services, response)
     case response.code
     when 200
       process_put_services_response_code_200(services)
     when 207
-      process_put_services_response_code_207(services,response)
+      process_put_services_response_code_207(services, response)
     else
       raise Puppet::Error, "FME Rest API returned #{response.code} when adding services to #{resource[:name]}. #{JSON.parse(response)}"
     end
@@ -149,16 +149,16 @@ Puppet::Type.type(:fme_repository_item).provide(:rest_client, :parent => Puppet:
     @property_hash[:services] = services
   end
 
-  def process_put_services_response_code_207(services,response)
-    #"The response body contains information about the result of the registration operation, indicating success or error status for each service"
-    @property_hash[:services] = JSON.parse(response).map { |service| service['name'] if service['status'] == 200}.compact
-    raise Puppet::Error, "The following services couldn't be added to #{resource[:name]}: #{services-@property_hash[:services]}"
+  def process_put_services_response_code_207(services, response)
+    # "The response body contains information about the result of the registration operation, indicating success or error status for each service"
+    @property_hash[:services] = JSON.parse(response).map { |service| service['name'] if service['status'] == 200 }.compact
+    raise Puppet::Error, "The following services couldn't be added to #{resource[:name]}: #{services - @property_hash[:services]}"
   end
 
   def checksum
     url = "#{@baseurl}/repositories/#{resource[:repository]}/items/#{resource[:item]}"
     sha256_checksum = Digest::SHA256.new
-    perform_checksum = Proc.new do |http_response|
+    perform_checksum = proc do |http_response|
       http_response.read_body do |chunk|
         sha256_checksum << chunk
       end

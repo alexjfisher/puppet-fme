@@ -8,6 +8,7 @@ class Puppet::Provider::Fme < Puppet::Provider
       end
     end
   end
+
   def exists?
     @property_hash[:ensure] == :present
   end

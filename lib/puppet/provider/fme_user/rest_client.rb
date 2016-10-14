@@ -17,9 +17,9 @@ Puppet::Type.type(:fme_user).provide(:rest_client, :parent => Puppet::Provider::
   def self.instances
     baseurl = Fme::Helper.get_url
     url = "#{baseurl}/security/accounts"
-    response = RestClient.get(url, {:params => {'detail' => 'high'}, :accept => :json})
+    response = RestClient.get(url, :params => { 'detail' => 'high' }, :accept => :json)
     users = JSON.parse(response)
-    users.collect do |user|
+    users.map do |user|
       user_properties = {}
       user_properties[:ensure]   = :present
       user_properties[:provider] = :rest_client
@@ -30,7 +30,7 @@ Puppet::Type.type(:fme_user).provide(:rest_client, :parent => Puppet::Provider::
     end
   end
 
-  def initialize(value={})
+  def initialize(value = {})
     super(value)
     @property_flush = {}
   end
@@ -41,7 +41,7 @@ Puppet::Type.type(:fme_user).provide(:rest_client, :parent => Puppet::Provider::
 
   def create
     if resource[:password].nil?
-      raise Puppet::Error, "Sorry, password is mandatory when creating fme_users"
+      raise Puppet::Error, 'Sorry, password is mandatory when creating fme_users'
     end
     baseurl = Fme::Helper.get_url
     url = "#{baseurl}/security/accounts"
@@ -54,7 +54,7 @@ Puppet::Type.type(:fme_user).provide(:rest_client, :parent => Puppet::Provider::
       RestClient.delete("#{Fme::Helper.get_url}/security/accounts/#{resource[:name]}", :accept => :json)
       @property_hash[:ensure] = :absent
     else
-      raise Puppet::Error, "Sorry, password is mandatory when modifying fme_users" if resource[:password].nil?
+      raise Puppet::Error, 'Sorry, password is mandatory when modifying fme_users' if resource[:password].nil?
       modify_user
     end
   end
@@ -62,7 +62,7 @@ Puppet::Type.type(:fme_user).provide(:rest_client, :parent => Puppet::Provider::
   def modify_user
     url = "#{Fme::Helper.get_url}/security/accounts/#{resource[:name]}"
 
-    RestClient.put("#{url}?detail=high&#{get_new_params}",'',{ :content_type => 'application/x-www-form-urlencoded', :accept => :json }) do |response, request, result, &block|
+    RestClient.put("#{url}?detail=high&#{get_new_params}", '', :content_type => 'application/x-www-form-urlencoded', :accept => :json) do |response, _request, _result|
       case response.code
       when 200
         @property_hash = Fme::Helper.response_to_property_hash(response)
@@ -78,9 +78,9 @@ Puppet::Type.type(:fme_user).provide(:rest_client, :parent => Puppet::Provider::
       {
         :name     => resource[:name],
         :password => resource[:password],
-        :fullName => ( resource[:fullname] || @property_hash[:fullname] ),
-        :roles    => ( resource[:roles]    || @property_hash[:roles] )
-      }.delete_if{ |k,v| v.nil? }
+        :fullName => (resource[:fullname] || @property_hash[:fullname]),
+        :roles    => (resource[:roles]    || @property_hash[:roles])
+      }.delete_if { |_k, v| v.nil? }
     )
   end
 end

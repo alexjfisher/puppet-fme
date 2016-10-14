@@ -14,16 +14,16 @@ Puppet::Type.type(:fme_repository).provide(:rest_client, :parent => Puppet::Prov
 
   mk_resource_methods
 
-  def initialize(value={})
+  def initialize(value = {})
     super(value)
     @baseurl = Fme::Helper.get_url
   end
 
   def self.instances
     url = "#{Fme::Helper.get_url}/repositories"
-    response = RestClient.get(url, {:params => {'detail' => 'high'}, :accept => :json})
+    response = RestClient.get(url, :params => { 'detail' => 'high' }, :accept => :json)
     repos = JSON.parse(response)
-    repos.collect do |repo|
+    repos.map do |repo|
       repo_properties = {}
       repo_properties[:ensure]      = :present
       repo_properties[:provider]    = :rest_client
@@ -34,20 +34,20 @@ Puppet::Type.type(:fme_repository).provide(:rest_client, :parent => Puppet::Prov
   end
 
   def create
-     url = "#{@baseurl}/repositories"
-     params = { 'name' => resource[:name], 'description' => resource[:description] }.delete_if{ |k,v| v.nil? }
-     RestClient.post(url, '', :params => params, :content_type => 'application/x-www-form-urlencoded', :accept => :json) do |response, request, result, &block|
-       case response.code
-       when 201
-         @property_hash = Fme::Helper.response_to_property_hash(response)
-       else
-         # Raise an error for all other response codes. Examples are
-         # 401 - 'Unauthorised'
-         # 409 - 'The repository already exists' (This shouldn't be possible)!
-         # 422 - 'Some or all of the input parameters are invalid'
-         raise Puppet::Error, "FME Rest API returned #{response.code} when creating #{resource[:name]}. #{JSON.parse(response)}"
-       end
-     end
+    url = "#{@baseurl}/repositories"
+    params = { 'name' => resource[:name], 'description' => resource[:description] }.delete_if { |_k, v| v.nil? }
+    RestClient.post(url, '', :params => params, :content_type => 'application/x-www-form-urlencoded', :accept => :json) do |response, _request, _result|
+      case response.code
+      when 201
+        @property_hash = Fme::Helper.response_to_property_hash(response)
+      else
+        # Raise an error for all other response codes. Examples are
+        # 401 - 'Unauthorised'
+        # 409 - 'The repository already exists' (This shouldn't be possible)!
+        # 422 - 'Some or all of the input parameters are invalid'
+        raise Puppet::Error, "FME Rest API returned #{response.code} when creating #{resource[:name]}. #{JSON.parse(response)}"
+      end
+    end
   end
 
   def destroy
@@ -55,7 +55,7 @@ Puppet::Type.type(:fme_repository).provide(:rest_client, :parent => Puppet::Prov
     @property_hash[:ensure] = :absent
   end
 
-  def description=(value)
+  def description=(_value)
     raise Puppet::Error, "FME API doesn't support updating the repository description"
   end
 end

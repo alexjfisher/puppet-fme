@@ -8,10 +8,10 @@ describe 'fme::api_settings' do
           facts
         end
 
-        context "without any parameters" do
+        context 'without any parameters' do
           it { is_expected.not_to compile }
         end
-        context "with username and password" do
+        context 'with username and password' do
           let(:params) { { :username => 'user', :password => 'secret' } }
           it { is_expected.to compile.with_all_deps }
           it { is_expected.to create_class('Fme::Api_settings') }
@@ -19,9 +19,9 @@ describe 'fme::api_settings' do
         end
       end
     end
-    context "on windows" do
+    context 'on windows' do
       let(:facts) { { :kernel => 'windows' } }
-      context "with username and password" do
+      context 'with username and password' do
         let(:params) { { :username => 'user', :password => 'secret' } }
         it { is_expected.to create_file('C:/fme_api_settings.yaml') }
       end

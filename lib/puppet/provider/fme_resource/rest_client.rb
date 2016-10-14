@@ -13,21 +13,21 @@ Puppet::Type.type(:fme_resource).provide(:rest_client) do
     confine :exists => '/etc/fme_api_settings.yaml'
   end
 
-  def initialize(value={})
+  def initialize(value = {})
     super(value)
     @baseurl = Fme::Helper.get_url
   end
 
-  def get_file_metadata(resource,path)
+  def get_file_metadata(resource, path)
     url = "#{@baseurl}/resources/connections/#{resource}/filesys/#{path}"
-    RestClient.get(url, {:params => {'detail' => 'low', :depth => 0}, :accept => :json}) do |response, request, result, &block|
+    RestClient.get(url, :params => { 'detail' => 'low', :depth => 0 }, :accept => :json) do |response, _request, _result|
       case response.code
       when 200
         extract_metadata_from_response(JSON.parse(response))
       when 404
         return nil
       else
-        fail "FME Rest API returned #{response.code} when getting metadata for #{resource}:#{path}. #{JSON.parse(response)}"
+        raise Puppet::Error, "FME Rest API returned #{response.code} when getting metadata for #{resource}:#{path}. #{JSON.parse(response)}"
       end
     end
   end
@@ -35,7 +35,7 @@ Puppet::Type.type(:fme_resource).provide(:rest_client) do
   def checksum
     url = "#{@baseurl}/resources/connections/#{resource[:resource]}/filesys#{resource[:path]}"
     sha256_checksum = Digest::SHA256.new
-    perform_checksum = Proc.new do |http_response|
+    perform_checksum = proc do |http_response|
       http_response.read_body do |chunk|
         sha256_checksum << chunk
       end
@@ -56,24 +56,24 @@ Puppet::Type.type(:fme_resource).provide(:rest_client) do
 
   def upload_file
     validate_source
-    RestClient.post(get_post_url, read_source, post_params_for_upload_file) do |response, request, result, &block|
-      fail "FME Rest API returned #{response.code} when uploading #{resource[:name]}. #{JSON.parse(response)}" unless response.code == 201
+    RestClient.post(get_post_url, read_source, post_params_for_upload_file) do |response, _request, _result|
+      raise Puppet::Error, "FME Rest API returned #{response.code} when uploading #{resource[:name]}. #{JSON.parse(response)}" unless response.code == 201
     end
   end
 
   def create_directory
-    RestClient.post(get_post_url, create_directory_post_request_body ) do |response, request, result, &block|
-      fail "FME Rest API returned #{response.code} when creating directory #{resource[:name]}. #{JSON.parse(response)}" unless response.code == 201
+    RestClient.post(get_post_url, create_directory_post_request_body) do |response, _request, _result|
+      raise Puppet::Error, "FME Rest API returned #{response.code} when creating directory #{resource[:name]}. #{JSON.parse(response)}" unless response.code == 201
     end
   end
 
   def create_directory_post_request_body
     directory_name = Pathname(resource[:path]).basename.to_s
-    request_body = URI.encode_www_form( :directoryname => directory_name, :type => 'DIR' )
+    request_body = URI.encode_www_form(:directoryname => directory_name, :type => 'DIR')
     request_body
   end
 
-  def has_source?
+  def source?
     return false if resource[:source].nil?
     true
   end
@@ -84,11 +84,11 @@ Puppet::Type.type(:fme_resource).provide(:rest_client) do
   end
 
   def validate_source
-    fail "source is required when creating new resource file" unless has_source?
+    raise Puppet::Error, 'source is required when creating new resource file' unless source?
   end
 
   def get_post_url
-    "#{@baseurl}/resources/connections/#{resource[:resource]}/filesys#{Pathname(resource[:path]).dirname.to_s}"
+    "#{@baseurl}/resources/connections/#{resource[:resource]}/filesys#{Pathname(resource[:path]).dirname}"
   end
 
   def post_params_for_upload_file
@@ -110,7 +110,7 @@ Puppet::Type.type(:fme_resource).provide(:rest_client) do
   end
 
   def properties
-    @property_hash = get_file_metadata(resource[:resource], resource[:path]) || {:ensure => :absent} if @property_hash.empty?
+    @property_hash = get_file_metadata(resource[:resource], resource[:path]) || { :ensure => :absent } if @property_hash.empty?
     @property_hash.dup
   end
 end

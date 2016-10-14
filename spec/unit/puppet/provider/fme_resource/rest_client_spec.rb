@@ -9,7 +9,7 @@ describe provider_class do
   end
 
   let :resource do
-    Puppet::Type.type(:fme_resource).new(:title => "FME_SHAREDRESOURCE_DATA:/path/to/resource", :provider => :rest_client)
+    Puppet::Type.type(:fme_resource).new(:title => 'FME_SHAREDRESOURCE_DATA:/path/to/resource', :provider => :rest_client)
   end
 
   let :provider do
@@ -19,37 +19,37 @@ describe provider_class do
   describe '#get_file_metadata' do
     context 'when response code is 200' do
       before :each do
-        stub_request(:get, "http://www.example.com/resources/connections/FME_SHAREDRESOURCE_DATA/filesys//path/to/resource?depth=0&detail=low").
-          to_return(:status => 200, :body => {'a' => 1, 'b' => 2}.to_json)
+        stub_request(:get, 'http://www.example.com/resources/connections/FME_SHAREDRESOURCE_DATA/filesys//path/to/resource?depth=0&detail=low').
+          to_return(:status => 200, :body => { 'a' => 1, 'b' => 2 }.to_json)
       end
       it 'should call extract_metadata_from_response with hash parsed from json response' do
         provider.expects(:extract_metadata_from_response).with('a' => 1, 'b' => 2)
-        provider.get_file_metadata('FME_SHAREDRESOURCE_DATA','/path/to/resource')
+        provider.get_file_metadata('FME_SHAREDRESOURCE_DATA', '/path/to/resource')
       end
       it 'should return result of extract_metadata_from_response' do
         mock_hash = { 'mock' => 'hash' }
         provider.expects(:extract_metadata_from_response).returns mock_hash
-        expect(provider.get_file_metadata('FME_SHAREDRESOURCE_DATA','/path/to/resource')).to eq mock_hash
+        expect(provider.get_file_metadata('FME_SHAREDRESOURCE_DATA', '/path/to/resource')).to eq mock_hash
       end
     end
     context 'when response code is 404' do
       before :each do
-        stub_request(:get, "http://www.example.com/resources/connections/FME_SHAREDRESOURCE_DATA/filesys//path/to/resource?depth=0&detail=low").
+        stub_request(:get, 'http://www.example.com/resources/connections/FME_SHAREDRESOURCE_DATA/filesys//path/to/resource?depth=0&detail=low').
           to_return(:status => 404)
       end
       it 'should return nil' do
-        expect(provider.get_file_metadata('FME_SHAREDRESOURCE_DATA','/path/to/resource')).to be_nil
+        expect(provider.get_file_metadata('FME_SHAREDRESOURCE_DATA', '/path/to/resource')).to be_nil
       end
     end
     context 'when response code is 403' do
       before :each do
-        stub_request(:get, "http://www.example.com/resources/connections/FME_SHAREDRESOURCE_DATA/filesys//path/to/resource?depth=0&detail=low").
-          to_return(:status => 403, :body => {'response' => 'hash'}.to_json)
+        stub_request(:get, 'http://www.example.com/resources/connections/FME_SHAREDRESOURCE_DATA/filesys//path/to/resource?depth=0&detail=low').
+          to_return(:status => 403, :body => { 'response' => 'hash' }.to_json)
       end
       it 'should raise exception' do
-        expect{provider.get_file_metadata('FME_SHAREDRESOURCE_DATA','/path/to/resource')}.
+        expect { provider.get_file_metadata('FME_SHAREDRESOURCE_DATA', '/path/to/resource') }.
           to raise_error(Puppet::Error,
-                         /FME Rest API returned 403 when getting metadata for FME_SHAREDRESOURCE_DATA:\/path\/to\/resource\. {"response"=>"hash"}/)
+                         %r[FME Rest API returned 403 when getting metadata for FME_SHAREDRESOURCE_DATA:/path/to/resource\. {"response"=>"hash"}])
       end
     end
   end
@@ -61,7 +61,7 @@ describe provider_class do
         expected_checksum = Digest::SHA256.new
         expected_checksum << mock_data
 
-        stub_request(:get, "http://www.example.com/resources/connections/FME_SHAREDRESOURCE_DATA/filesys/path/to/resource").
+        stub_request(:get, 'http://www.example.com/resources/connections/FME_SHAREDRESOURCE_DATA/filesys/path/to/resource').
           to_return(:status => 200, :body => mock_data)
 
         checksum = provider.checksum
@@ -70,10 +70,10 @@ describe provider_class do
     end
     context 'on API failure' do
       it 'should raise error' do
-        stub_request(:get, "http://www.example.com/resources/connections/FME_SHAREDRESOURCE_DATA/filesys/path/to/resource").
+        stub_request(:get, 'http://www.example.com/resources/connections/FME_SHAREDRESOURCE_DATA/filesys/path/to/resource').
           to_return(:status => 404)
-        expect{provider.checksum}.
-          to raise_error(Puppet::Error, /Error calculating checksum 404/)
+        expect { provider.checksum }.
+          to raise_error(Puppet::Error, %r{Error calculating checksum 404})
       end
     end
   end
@@ -133,22 +133,22 @@ describe provider_class do
         provider.stubs(:validate_source)
         provider.stubs(:read_source).returns('DATA')
         provider.stubs(:get_post_url).returns('http://URL')
-        provider.stubs(:post_params_for_upload_file).returns({'post' => 'params'})
+        provider.stubs(:post_params_for_upload_file).returns('post' => 'params')
       end
       context 'when successful' do
         it 'should not raise any error' do
-          stub_request(:post, "http://url/").
-            with(:body => "DATA", :headers => {'Post'=>'params'}).
-            to_return(:status => 201, :body => "")
-          expect{provider.upload_file}.to_not raise_error
+          stub_request(:post, 'http://url/').
+            with(:body => 'DATA', :headers => { 'Post' => 'params' }).
+            to_return(:status => 201, :body => '')
+          expect { provider.upload_file }.to_not raise_error
         end
       end
       context 'when unsuccessful' do
         it 'should raise error' do
-          stub_request(:post, "http://url/").
-            with(:body => "DATA", :headers => {'Post'=>'params'}).
+          stub_request(:post, 'http://url/').
+            with(:body => 'DATA', :headers => { 'Post' => 'params' }).
             to_return(:status => 409, :body => '{"what": "/for/bar/upload", "reason": "exists", "message": "File \'upload\' already exists"}')
-          expect{provider.upload_file}.to raise_error(Puppet::Error, /FME Rest API returned 409 when uploading FME_SHAREDRESOURCE_DATA:\/path\/to\/resource\. {"what"=>"\/for\/bar\/upload", "reason"=>"exists", "message"=>"File 'upload' already exists"/)
+          expect { provider.upload_file }.to raise_error(Puppet::Error, %r[FME Rest API returned 409 when uploading FME_SHAREDRESOURCE_DATA:/path/to/resource\. {"what"=>"/for/bar/upload", "reason"=>"exists", "message"=>"File 'upload' already exists"])
         end
       end
     end
@@ -159,32 +159,32 @@ describe provider_class do
     end
     context 'when successful' do
       it 'should not raise any error' do
-        stub_request(:post, "http://url/").
-          with(:body => "directoryname=resource&type=DIR").
+        stub_request(:post, 'http://url/').
+          with(:body => 'directoryname=resource&type=DIR').
           to_return(:status => 201)
-        expect{provider.create_directory}.to_not raise_error
+        expect { provider.create_directory }.to_not raise_error
       end
     end
     context 'when unsuccessful' do
       it 'should raise error' do
-        stub_request(:post, "http://url/").
-          with(:body => "directoryname=resource&type=DIR").
+        stub_request(:post, 'http://url/').
+          with(:body => 'directoryname=resource&type=DIR').
           to_return(:status => 409, :body => '{"what": "/for/bar/testdir", "reason": "exists", "message": "Directory \'testdir\' already exists"}')
-        expect{provider.create_directory}.to raise_error(Puppet::Error, /FME Rest API returned 409 when creating directory FME_SHAREDRESOURCE_DATA:\/path\/to\/resource\. {"what"=>"\/for\/bar\/testdir", "reason"=>"exists", "message"=>"Directory 'testdir' already exists"/)
+        expect { provider.create_directory }.to raise_error(Puppet::Error, %r[FME Rest API returned 409 when creating directory FME_SHAREDRESOURCE_DATA:/path/to/resource\. {"what"=>"/for/bar/testdir", "reason"=>"exists", "message"=>"Directory 'testdir' already exists"])
       end
     end
   end
 
-  describe '#has_source?' do
+  describe '#source?' do
     context 'when source parameter has been specified' do
       it 'should return true' do
         resource[:source] = '/path/to/file'
-        expect(provider.has_source?).to eq true
+        expect(provider.source?).to eq true
       end
     end
     context 'when no source parameter' do
       it 'should return false' do
-        expect(provider.has_source?).to eq false
+        expect(provider.source?).to eq false
       end
     end
   end
@@ -195,7 +195,7 @@ describe provider_class do
       resource[:source] = mock_source_file
       mock_data = 'DATA'
       FakeFS do
-        File.open(mock_source_file,'w') do |f|
+        File.open(mock_source_file, 'w') do |f|
           f.write mock_data
         end
         expect(provider.read_source).to eq mock_data
@@ -204,29 +204,29 @@ describe provider_class do
   end
 
   describe '#validate_source' do
-    context 'when has_source?' do
+    context 'when source?' do
       it 'should do nothing' do
-        provider.expects(:has_source?).returns(true)
-        expect{provider.validate_source}.to_not raise_error
+        provider.expects(:source?).returns(true)
+        expect { provider.validate_source }.to_not raise_error
       end
     end
-    context 'when has_source? is false' do
+    context 'when source? is false' do
       it 'should raise an exception' do
-        provider.expects(:has_source?).returns(false)
-        expect{provider.validate_source}.to raise_error(Puppet::Error, /source is required when creating new resource file/)
+        provider.expects(:source?).returns(false)
+        expect { provider.validate_source }.to raise_error(Puppet::Error, %r{source is required when creating new resource file})
       end
     end
   end
 
   describe '#destroy' do
     before :each do
-      stub_request(:delete, "http://www.example.com/resources/connections/FME_SHAREDRESOURCE_DATA/filesys//path/to/resource")
+      stub_request(:delete, 'http://www.example.com/resources/connections/FME_SHAREDRESOURCE_DATA/filesys//path/to/resource')
     end
     it 'should delete the resource' do
       provider.destroy
     end
     it 'should clear the property hash' do
-      provider.instance_variable_set(:@property_hash,{:ensure => :file})
+      provider.instance_variable_set(:@property_hash, :ensure => :file)
       expect(provider.instance_variable_get(:@property_hash)).to eq :ensure => :file
       provider.destroy
       expect(provider.instance_variable_get(:@property_hash)).to be_empty
@@ -236,18 +236,18 @@ describe provider_class do
   describe '#properties' do
     context 'when property hash is empty' do
       before :each do
-        provider.instance_variable_set(:@property_hash,{})
+        provider.instance_variable_set(:@property_hash, {})
       end
       context 'when resource is found' do
         it 'should return result of get_file_metadata' do
-          provider.expects(:get_file_metadata).returns({ :ensure => :file })
-          expect(provider.properties).to eq({ :ensure => :file })
+          provider.expects(:get_file_metadata).returns(:ensure => :file)
+          expect(provider.properties).to eq(:ensure => :file)
         end
       end
       context 'when resource is not found' do
         it 'should set :ensure => :absent' do
           provider.expects(:get_file_metadata).returns nil
-          expect(provider.properties).to eq({ :ensure => :absent })
+          expect(provider.properties).to eq(:ensure => :absent)
         end
       end
     end
