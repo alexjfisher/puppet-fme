@@ -55,7 +55,7 @@ Puppet::Type.type(:fme_repository).provide(:rest_client, :parent => Puppet::Prov
     @property_hash[:ensure] = :absent
   end
 
-  def description=(value)
+  def description=(_value)
     raise Puppet::Error, "FME API doesn't support updating the repository description"
   end
 end
