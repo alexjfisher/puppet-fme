@@ -137,7 +137,7 @@ Puppet::Type.newtype(:fme_resource) do
 
   newparam(:name) do
     desc 'The default namevar'
-    munge do |discard|
+    munge do |_discard|
       shared_resource = @resource.original_parameters[:resource]
       path            = @resource.original_parameters[:path]
       "#{shared_resource}:#{path}"

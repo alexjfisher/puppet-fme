@@ -53,7 +53,7 @@ Puppet::Type.newtype(:fme_repository_item) do
       [
         %r{(.*)}, # Catch all workaround to avoid 'No set of title patterns matched the title'
         [
-          [:dummy, ->(x) { '' }]
+          [:dummy, ->(_x) { '' }]
         ]
       ]
     ]
@@ -102,22 +102,22 @@ Puppet::Type.newtype(:fme_repository_item) do
 
   newproperty(:description) do
     desc "The item's description. Read-only"
-    validate { |val| raise Puppet::Error, 'description is read-only' }
+    validate { |_val| raise Puppet::Error, 'description is read-only' }
   end
 
   newproperty(:item_title) do
     desc "The item's title. Read-only"
-    validate { |val| raise Puppet::Error, 'item_title is read-only' }
+    validate { |_val| raise Puppet::Error, 'item_title is read-only' }
   end
 
   newproperty(:type) do
     desc "The item's type. Read-only"
-    validate { |val| raise Puppet::Error, 'type is read-only' }
+    validate { |_val| raise Puppet::Error, 'type is read-only' }
   end
 
   newproperty(:last_save_date) do
     desc "The item's lastSaveDate. Read-only"
-    validate { |val| raise Puppet::Error, 'last_save_date is read-only' }
+    validate { |_val| raise Puppet::Error, 'last_save_date is read-only' }
   end
 
   newproperty(:services, :array_matching => :all) do

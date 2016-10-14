@@ -35,8 +35,8 @@ Puppet::Type.type(:fme_repository).provide(:rest_client, :parent => Puppet::Prov
 
   def create
     url = "#{@baseurl}/repositories"
-    params = { 'name' => resource[:name], 'description' => resource[:description] }.delete_if { |k, v| v.nil? }
-    RestClient.post(url, '', :params => params, :content_type => 'application/x-www-form-urlencoded', :accept => :json) do |response, request, result, &block|
+    params = { 'name' => resource[:name], 'description' => resource[:description] }.delete_if { |_k, v| v.nil? }
+    RestClient.post(url, '', :params => params, :content_type => 'application/x-www-form-urlencoded', :accept => :json) do |response, _request, _result|
       case response.code
       when 201
         @property_hash = Fme::Helper.response_to_property_hash(response)

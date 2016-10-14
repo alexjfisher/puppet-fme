@@ -20,7 +20,7 @@ Puppet::Type.type(:fme_resource).provide(:rest_client) do
 
   def get_file_metadata(resource, path)
     url = "#{@baseurl}/resources/connections/#{resource}/filesys/#{path}"
-    RestClient.get(url, :params => { 'detail' => 'low', :depth => 0 }, :accept => :json) do |response, request, result, &block|
+    RestClient.get(url, :params => { 'detail' => 'low', :depth => 0 }, :accept => :json) do |response, _request, _result|
       case response.code
       when 200
         extract_metadata_from_response(JSON.parse(response))
@@ -56,13 +56,13 @@ Puppet::Type.type(:fme_resource).provide(:rest_client) do
 
   def upload_file
     validate_source
-    RestClient.post(get_post_url, read_source, post_params_for_upload_file) do |response, request, result, &block|
+    RestClient.post(get_post_url, read_source, post_params_for_upload_file) do |response, _request, _result|
       raise Puppet::Error, "FME Rest API returned #{response.code} when uploading #{resource[:name]}. #{JSON.parse(response)}" unless response.code == 201
     end
   end
 
   def create_directory
-    RestClient.post(get_post_url, create_directory_post_request_body) do |response, request, result, &block|
+    RestClient.post(get_post_url, create_directory_post_request_body) do |response, _request, _result|
       raise Puppet::Error, "FME Rest API returned #{response.code} when creating directory #{resource[:name]}. #{JSON.parse(response)}" unless response.code == 201
     end
   end

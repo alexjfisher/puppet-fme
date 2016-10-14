@@ -61,7 +61,7 @@ Puppet::Type.type(:fme_repository_item).provide(:rest_client, :parent => Puppet:
 
   def create
     raise 'source is required when creating new repository item' if resource[:source].nil?
-    RestClient.post(create_url, read_item_from_file, get_post_params) do |response, request, result, &block|
+    RestClient.post(create_url, read_item_from_file, get_post_params) do |response, _request, _result|
       process_create_response(response)
     end
   end
@@ -121,7 +121,7 @@ Puppet::Type.type(:fme_repository_item).provide(:rest_client, :parent => Puppet:
   end
 
   def services=(services)
-    RestClient.put(item_services_url, services_body(services), :accept => :json, :content_type => 'application/x-www-form-urlencoded') do |response, request, result, &block|
+    RestClient.put(item_services_url, services_body(services), :accept => :json, :content_type => 'application/x-www-form-urlencoded') do |response, _request, _result|
       process_put_services_response(services, response)
     end
   end
