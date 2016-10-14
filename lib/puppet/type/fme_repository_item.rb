@@ -60,15 +60,15 @@ Puppet::Type.newtype(:fme_repository_item) do
   end
 
   validate do
-    fail "'name' should not be used" unless @original_parameters[:name].nil? || @original_parameters[:name] == "#{@original_parameters[:repository]}/#{@original_parameters[:item]}"
+    raise Puppet::Error, "'name' should not be used" unless @original_parameters[:name].nil? || @original_parameters[:name] == "#{@original_parameters[:repository]}/#{@original_parameters[:item]}"
     if match = @title.match(%r{^(.*)/(.*)$}) # rubocop:disable Lint/AssignmentInCondition
-      fail "'repository' parameter #{self[:repository]} must match resource title #{@title} or be omitted" unless match.captures[0] == self[:repository]
-      fail "'item' parameter #{self[:item]} must match resource title #{@title} or be omitted" unless match.captures[1] == self[:item]
+      raise Puppet::Error, "'repository' parameter #{self[:repository]} must match resource title #{@title} or be omitted" unless match.captures[0] == self[:repository]
+      raise Puppet::Error, "'item' parameter #{self[:item]} must match resource title #{@title} or be omitted" unless match.captures[1] == self[:item]
     end
   end
 
   newparam(:dummy) do
-    validate { |value| fail "dummy parameter shouldn't be used" unless value.empty? }
+    validate { |value| raise Puppet::Error, "dummy parameter shouldn't be used" unless value.empty? }
   end
 
   newparam(:repository, :namevar => true) do
@@ -87,7 +87,7 @@ Puppet::Type.newtype(:fme_repository_item) do
       if value.empty? && resource[:repository] && resource[:item]
         "#{resource[:repository]}/#{resource[:item]}"
       else
-        fail "Use resource name style <repository>/<item> OR specify both 'repository' and 'item'" unless value =~ %r{^(.*)/(.*)$}
+        raise Puppet::Error, "Use resource name style <repository>/<item> OR specify both 'repository' and 'item'" unless value =~ %r{^(.*)/(.*)$}
         value
       end
     end
@@ -96,28 +96,28 @@ Puppet::Type.newtype(:fme_repository_item) do
   newparam(:source) do
     desc 'The file to upload.  Must be the absolute path to a file.'
     validate do |value|
-      fail "'source' file path must be fully qualified, not '#{value}'" unless Puppet::Util.absolute_path?(value)
+      raise Puppet::Error, "'source' file path must be fully qualified, not '#{value}'" unless Puppet::Util.absolute_path?(value)
     end
   end
 
   newproperty(:description) do
     desc "The item's description. Read-only"
-    validate { |val| fail 'description is read-only' }
+    validate { |val| raise Puppet::Error, 'description is read-only' }
   end
 
   newproperty(:item_title) do
     desc "The item's title. Read-only"
-    validate { |val| fail 'item_title is read-only' }
+    validate { |val| raise Puppet::Error, 'item_title is read-only' }
   end
 
   newproperty(:type) do
     desc "The item's type. Read-only"
-    validate { |val| fail 'type is read-only' }
+    validate { |val| raise Puppet::Error, 'type is read-only' }
   end
 
   newproperty(:last_save_date) do
     desc "The item's lastSaveDate. Read-only"
-    validate { |val| fail 'last_save_date is read-only' }
+    validate { |val| raise Puppet::Error, 'last_save_date is read-only' }
   end
 
   newproperty(:services, :array_matching => :all) do

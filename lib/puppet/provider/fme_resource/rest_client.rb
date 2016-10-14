@@ -27,7 +27,7 @@ Puppet::Type.type(:fme_resource).provide(:rest_client) do
       when 404
         return nil
       else
-        fail "FME Rest API returned #{response.code} when getting metadata for #{resource}:#{path}. #{JSON.parse(response)}"
+        raise Puppet::Error, "FME Rest API returned #{response.code} when getting metadata for #{resource}:#{path}. #{JSON.parse(response)}"
       end
     end
   end
@@ -57,13 +57,13 @@ Puppet::Type.type(:fme_resource).provide(:rest_client) do
   def upload_file
     validate_source
     RestClient.post(get_post_url, read_source, post_params_for_upload_file) do |response, request, result, &block|
-      fail "FME Rest API returned #{response.code} when uploading #{resource[:name]}. #{JSON.parse(response)}" unless response.code == 201
+      raise Puppet::Error, "FME Rest API returned #{response.code} when uploading #{resource[:name]}. #{JSON.parse(response)}" unless response.code == 201
     end
   end
 
   def create_directory
     RestClient.post(get_post_url, create_directory_post_request_body) do |response, request, result, &block|
-      fail "FME Rest API returned #{response.code} when creating directory #{resource[:name]}. #{JSON.parse(response)}" unless response.code == 201
+      raise Puppet::Error, "FME Rest API returned #{response.code} when creating directory #{resource[:name]}. #{JSON.parse(response)}" unless response.code == 201
     end
   end
 
@@ -84,7 +84,7 @@ Puppet::Type.type(:fme_resource).provide(:rest_client) do
   end
 
   def validate_source
-    fail 'source is required when creating new resource file' unless has_source?
+    raise Puppet::Error, 'source is required when creating new resource file' unless has_source?
   end
 
   def get_post_url

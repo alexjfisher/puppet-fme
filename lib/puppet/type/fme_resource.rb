@@ -23,8 +23,8 @@ Puppet::Type.newtype(:fme_resource) do
   end
 
   validate do
-    fail 'fme_resource: path is required or use <RESOURCE>:<PATH> style resource title'     unless self[:path]
-    fail 'fme_resource: resource is required or use <RESOURCE>:<PATH> style resource title' unless self[:resource]
+    raise Puppet::Error, 'fme_resource: path is required or use <RESOURCE>:<PATH> style resource title'     unless self[:path]
+    raise Puppet::Error, 'fme_resource: resource is required or use <RESOURCE>:<PATH> style resource title' unless self[:resource]
   end
 
   ensurable do
@@ -37,14 +37,14 @@ Puppet::Type.newtype(:fme_resource) do
         provider.destroy
         provider.upload_file
       elsif current == :directory
-        fail 'Cannot replace a directory with a file!'
+        raise 'Cannot replace a directory with a file!'
       end
     end
 
     aliasvalue(:present, :file)
 
     newvalue(:directory) do
-      fail 'Cannot replace a file with a directory!' if retrieve == :file
+      raise Puppet::Error, 'Cannot replace a file with a directory!' if retrieve == :file
       provider.create_directory
     end
 
@@ -116,13 +116,13 @@ Puppet::Type.newtype(:fme_resource) do
   newparam(:source) do
     desc 'The file to upload.  Must be the absolute path to a file.'
     validate do |value|
-      fail "'source' file path must be absolute, not '#{value}'" unless Puppet::Util.absolute_path?(value)
+      raise Puppet::Error, "'source' file path must be absolute, not '#{value}'" unless Puppet::Util.absolute_path?(value)
     end
   end
 
   newparam(:path, :namevar => true) do
     validate do |value|
-      fail "'path' file path must be absolute, not '#{value}'" unless Puppet::Util.absolute_path?(value)
+      raise Puppet::Error, "'path' file path must be absolute, not '#{value}'" unless Puppet::Util.absolute_path?(value)
     end
   end
 
