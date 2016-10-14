@@ -29,7 +29,7 @@ Puppet::Type.newtype(:fme_resource) do
 
   ensurable do
     newvalue(:file) do
-      current = self.retrieve
+      current = retrieve
       if current == :absent
         provider.upload_file
       elsif current == :file
@@ -44,7 +44,7 @@ Puppet::Type.newtype(:fme_resource) do
     aliasvalue(:present, :file)
 
     newvalue(:directory) do
-      fail 'Cannot replace a file with a directory!' if self.retrieve == :file
+      fail 'Cannot replace a file with a directory!' if retrieve == :file
       provider.create_directory
     end
 
