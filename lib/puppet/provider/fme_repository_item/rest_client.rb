@@ -158,7 +158,7 @@ Puppet::Type.type(:fme_repository_item).provide(:rest_client, :parent => Puppet:
   def checksum
     url = "#{@baseurl}/repositories/#{resource[:repository]}/items/#{resource[:item]}"
     sha256_checksum = Digest::SHA256.new
-    perform_checksum = Proc.new do |http_response|
+    perform_checksum = proc do |http_response|
       http_response.read_body do |chunk|
         sha256_checksum << chunk
       end

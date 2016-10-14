@@ -35,7 +35,7 @@ Puppet::Type.type(:fme_resource).provide(:rest_client) do
   def checksum
     url = "#{@baseurl}/resources/connections/#{resource[:resource]}/filesys#{resource[:path]}"
     sha256_checksum = Digest::SHA256.new
-    perform_checksum = Proc.new do |http_response|
+    perform_checksum = proc do |http_response|
       http_response.read_body do |chunk|
         sha256_checksum << chunk
       end
