@@ -88,7 +88,7 @@ Puppet::Type.type(:fme_resource).provide(:rest_client) do
   end
 
   def get_post_url
-    "#{@baseurl}/resources/connections/#{resource[:resource]}/filesys#{Pathname(resource[:path]).dirname.to_s}"
+    "#{@baseurl}/resources/connections/#{resource[:resource]}/filesys#{Pathname(resource[:path]).dirname}"
   end
 
   def post_params_for_upload_file

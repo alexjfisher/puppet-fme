@@ -140,7 +140,7 @@ Puppet::Type.newtype(:fme_resource) do
     munge do |discard|
       shared_resource = @resource.original_parameters[:resource]
       path            = @resource.original_parameters[:path]
-      "#{shared_resource.to_s}:#{path.to_s}"
+      "#{shared_resource}:#{path}"
     end
   end
 end
