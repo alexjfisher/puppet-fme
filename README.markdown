@@ -1,3 +1,4 @@
+[![License](https://img.shields.io/github/license/ordnancesurvey/puppet-fme.svg)](https://github.com/ordnancesurvey/puppet-fme/blob/master/LICENSE)
 [![Puppet Forge Version](https://img.shields.io/puppetforge/v/ordnancesurvey/fme.svg)](https://forge.puppetlabs.com/ordnancesurvey/fme)
 [![Puppet Forge Downloads](https://img.shields.io/puppetforge/dt/ordnancesurvey/fme.svg)](https://forge.puppetlabs.com/ordnancesurvey/fme)
 [![Build Status](https://img.shields.io/travis/OrdnanceSurvey/puppet-fme.svg)](https://travis-ci.org/OrdnanceSurvey/puppet-fme)
@@ -52,32 +53,44 @@ Before using any of these types, declare the fme::api_settings class and this wi
 
 All the types autorequire the settings file.
 
-Here is a simple example that creates a user, uploads a workspace to a repository and uploads an `fme resource`
+Here is a simple example with comments.
 
 ```
-class {'fme::api_settings':
+# Configure access to REST API
+class { 'fme::api_settings':
   username => 'admin',
   password => 'password',
+  protocol => 'https',
+  port     => 443,
 }
 
-fme_user {'myuser':
+# Create a user
+fme_user { 'myuser':
   fullname => 'My User',
   password => 'topsecret',
 }
 
-fme_repository {'my_repo':
+# Create a repository
+fme_repository { 'my_repo':
   ensure => present,
 }
 
-fme_repository_item {'my_repo/item.fmw':
+# Upload a workspace to the repository
+fme_repository_item { 'my_repo/item.fmw':
   ensure => present,
   source => '/path/to/item.fmw',
 }
 
-fme_resource {'FME_SHAREDRESOURCE_DATA:/foo/my_resource.data':
+# Upload an FME resource
+fme_resource { 'FME_SHAREDRESOURCE_DATA:/foo/my_resource.data':
   ensure   => file,
   checksum => true,
   source   => '/path/to/my_resource.data',
+}
+
+# Modify an FME service for HTTPS
+fme_service { 'fmedatadownload':
+  url => "https://${::fqdn}/fmedatadownload",
 }
 
 ```
